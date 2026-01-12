@@ -1,34 +1,14 @@
 import "./global.css";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import { QueryProvider } from "./providers/QueryProvider";
-import { useExampleStore } from "./stores/useExampleStore";
-
-function AppContent() {
-  const { count, increment, decrement } = useExampleStore();
-
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <Text style={styles.container}>Count: {count}</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import TabNavigator from "./components/TabNavigation";
 
 export default function App() {
   return (
     <QueryProvider>
-      <AppContent />
+      <TabNavigator />
+      {/* 상태바 설정 */}
+      <StatusBar style="auto" />
     </QueryProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
