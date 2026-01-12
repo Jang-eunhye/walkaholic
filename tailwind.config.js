@@ -5,6 +5,8 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}",
     "./providers/**/*.{js,jsx,ts,tsx}",
     "./stores/**/*.{js,jsx,ts,tsx}",
+    "./pages/**/*.{js,jsx,ts,tsx}",
+    "./com"
   ],
   presets: [require("nativewind/preset")],
   theme: {
