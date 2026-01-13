@@ -1,9 +1,10 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function IconSection() {
   return (
-    <View>
-      <Text className="text-2xl font-bold text-gray-800">아이콘</Text>
+    <View className="w-full items-center justify-center">
+      <Ionicons name="heart-circle-outline" size={200} color="green" />
     </View>
   );
 }
