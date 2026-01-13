@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 
 export default function WeatherPage() {
   return (
-    <View className="flex-1 items-center">
+    <View className="flex-1 p-4 items-center">
       {/* 위치정보 */}
       <Text className="text-2xl font-bold text-gray-800">
         인천광역시 서구 가정동
