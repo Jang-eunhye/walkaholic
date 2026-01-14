@@ -1,12 +1,16 @@
 import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
+import Constants from "expo-constants";
 import { getCurrentLocation } from "../utils/location/getCurrentLocation";
 import { getAddressFromCoordinates } from "../utils/location/getAddressFromCoordinates";
 import LocationSection from "./weatherPage/LocationSection";
 import WeatherInfoSection from "./weatherPage/WeatherInfoSection";
 import WeatherWarningSection from "./weatherPage/WeatherWarningSection";
+import { getWeatherData } from "../utils/weather/getWeatherData";
 
 export default function WeatherPage() {
+
+  const API_KEY = Constants.expoConfig?.extra?.openweatherApiKey || ""
   // 위치 주소 문자열 상태
   const [locationName, setLocationName] =
     useState<string>("위치 정보 가져오는 중...");
@@ -26,6 +30,13 @@ export default function WeatherPage() {
         coordinates.longitude
       );
       setLocationName(address);
+
+      const weatherData = await getWeatherData(
+        coordinates.latitude,
+        coordinates.longitude,
+        API_KEY
+      );
+      console.log("weatherData", weatherData);
     })();
   }, []);
 
