@@ -19,6 +19,7 @@ export interface WeatherData {
 
   // 날씨 상태
   weatherIcon: string; // 날씨 아이콘 코드
+  weatherMain: string; // 날씨 그룹 (Clear, Rain, Snow, Thunderstorm, Drizzle, Mist, Fog 등)
 
   // 미세먼지 정보
   aqi: number; // 대기질 지수 (1=좋음, 2=보통, 3=나쁨, 4=매우나쁨, 5=최악)
@@ -76,6 +77,7 @@ export async function getWeatherData(
 
       // 날씨 상태
       weatherIcon: weatherData.weather[0]?.icon || "",
+      weatherMain: weatherData.weather[0]?.main || "",
 
       // 미세먼지 정보
       aqi,

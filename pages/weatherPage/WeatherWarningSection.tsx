@@ -17,6 +17,20 @@ export default function WeatherWarningSection({
 
   const warnings: string[] = [];
 
+  // 날씨 상태 경고
+  const weatherMain = weatherData.weatherMain.toUpperCase();
+  if (weatherMain === "THUNDERSTORM") {
+    warnings.push("천둥번개가 있어요. 실외 활동을 피하세요.");
+  } else if (weatherMain === "RAIN") {
+    warnings.push("비가 내려요. 우산을 챙기세요.");
+  } else if (weatherMain === "DRIZZLE") {
+    warnings.push("이슬비가 내려요. 우산을 준비하세요.");
+  } else if (weatherMain === "SNOW") {
+    warnings.push("눈이 내려요. 미끄럼에 주의하세요.");
+  } else if (weatherMain === "MIST" || weatherMain === "FOG") {
+    warnings.push("안개가 껴있어요. 시야가 좋지 않으니 주의하세요.");
+  }
+
   // 미세먼지 경고 (매우 나쁨: 4 이상)
   if (weatherData.aqi >= 4) {
     warnings.push(
