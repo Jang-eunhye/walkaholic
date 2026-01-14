@@ -6,14 +6,15 @@ import { getAddressFromCoordinates } from "../utils/location/getAddressFromCoord
 import LocationSection from "./weatherPage/LocationSection";
 import WeatherInfoSection from "./weatherPage/WeatherInfoSection";
 import WeatherWarningSection from "./weatherPage/WeatherWarningSection";
-import { getWeatherData } from "../utils/weather/getWeatherData";
+import { getWeatherData, WeatherData } from "../utils/weather/getWeatherData";
 
 export default function WeatherPage() {
-
-  const API_KEY = Constants.expoConfig?.extra?.openweatherApiKey || ""
+  const API_KEY = Constants.expoConfig?.extra?.openweatherApiKey || "";
   // 위치 주소 문자열 상태
   const [locationName, setLocationName] =
     useState<string>("위치 정보 가져오는 중...");
+  // 날씨 데이터 상태
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -31,12 +32,13 @@ export default function WeatherPage() {
       );
       setLocationName(address);
 
-      const weatherData = await getWeatherData(
+      // 3. 날씨 및 미세먼지 데이터 가져오기
+      const fetchedWeatherData = await getWeatherData(
         coordinates.latitude,
         coordinates.longitude,
         API_KEY
       );
-      console.log("weatherData", weatherData);
+      setWeatherData(fetchedWeatherData);
     })();
   }, []);
 
@@ -49,7 +51,7 @@ export default function WeatherPage() {
       <LocationSection locationName={locationName} />
 
       {/* 날씨정보 */}
-      <WeatherInfoSection />
+      <WeatherInfoSection weatherData={weatherData} />
 
       {/* 주의문구 */}
       <WeatherWarningSection />
