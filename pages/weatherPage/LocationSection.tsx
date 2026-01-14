@@ -1,11 +1,15 @@
 import { View, Text } from "react-native";
 
-export default function LocationSection() {
+interface LocationSectionProps {
+  locationName: string;
+}
+
+export default function LocationSection({
+  locationName,
+}: LocationSectionProps) {
   return (
     <View className="bg-red-300 py-3">
-      <Text className="text-2xl font-bold text-gray-900">
-        인천광역시 서구 가정동
-      </Text>
+      <Text className="text-2xl font-bold text-gray-900">{locationName}</Text>
     </View>
   );
 }
