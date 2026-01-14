@@ -1,11 +1,14 @@
-import { View } from "react-native";
+import { ScrollView } from "react-native";
 import LocationSection from "./weatherPage/LocationSection";
 import WeatherInfoSection from "./weatherPage/WeatherInfoSection";
 import WeatherWarningSection from "./weatherPage/WeatherWarningSection";
 
 export default function WeatherPage() {
   return (
-    <View className="flex-1 bg-white p-4">
+    <ScrollView
+      className="flex-1 bg-white"
+      contentContainerStyle={{ padding: 16 }}
+    >
       {/* 위치정보 */}
       <LocationSection />
 
@@ -14,6 +17,6 @@ export default function WeatherPage() {
 
       {/* 주의문구 */}
       <WeatherWarningSection />
-    </View>
+    </ScrollView>
   );
 }
