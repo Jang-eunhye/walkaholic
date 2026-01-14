@@ -54,7 +54,7 @@ export default function WeatherPage() {
       <WeatherInfoSection weatherData={weatherData} />
 
       {/* 주의문구 */}
-      <WeatherWarningSection />
+      <WeatherWarningSection weatherData={weatherData} />
     </ScrollView>
   );
 }
