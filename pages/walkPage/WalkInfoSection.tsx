@@ -18,7 +18,6 @@ export default function WalkInfoSection() {
     const interval = setInterval(() => {
       const elapsed = calculateElapsedTime(startTime);
       setElapsedTime(elapsed);
-      console.log(elapsed);
     }, 6000);
 
     return () => clearInterval(interval);
