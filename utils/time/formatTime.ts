@@ -16,5 +16,5 @@ export function formatTime(seconds: number): string {
     parts.push(`${minutes}분`);
   }
 
-  return parts.length > 0 ? parts.join(" ") : "";
+  return parts.length > 0 ? parts.join(" ") : "0분";
 }
