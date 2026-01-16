@@ -4,11 +4,17 @@ import { useWalkStore } from "../../stores/useWalkStore";
 import { calculateElapsedTime } from "../../utils/time/calculateElapsedTime";
 import { formatTime } from "../../utils/time/formatTime";
 import { useLocationTracking } from "../../hooks/useLocationTracking";
+import { useStepCounter } from "../../hooks/useStepCounter";
 
 export default function WalkInfoSection() {
   const { isWalking, startTime } = useWalkStore();
   const [elapsedTime, setElapsedTime] = useState(0);
   const { totalDistance } = useLocationTracking(isWalking);
+  const { steps, isAvailable } = useStepCounter(isWalking);
+
+  // 칼로리 계산 (걸음수 기반 추정)
+  // 평균: 1걸음 = 0.04kcal (체중, 속도 등에 따라 다름)
+  const calories = Math.round(steps * 0.04);
 
   useEffect(() => {
     if (!isWalking || !startTime) {
@@ -20,7 +26,7 @@ export default function WalkInfoSection() {
     const interval = setInterval(() => {
       const elapsed = calculateElapsedTime(startTime);
       setElapsedTime(elapsed);
-    }, 6000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [isWalking, startTime]);
@@ -32,6 +38,10 @@ export default function WalkInfoSection() {
     <View className="flex-1 bg-red-200">
       <Text>산책 경과 시간: {formatTime(elapsedTime)}</Text>
       <Text>총 거리: {distanceKm}km</Text>
+      <Text>
+        총 걸음수: {isAvailable ? `${steps.toLocaleString()}걸음` : "-"}
+      </Text>
+      <Text>칼로리 소모량: {calories}kcal</Text>
     </View>
   );
 }

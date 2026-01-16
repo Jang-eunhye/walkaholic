@@ -7,7 +7,7 @@ import { useWalkStore } from "../stores/useWalkStore";
 
 export default function WalkPage() {
   const { isWalking } = useWalkStore();
-
+  
   return (
     <View className="flex-1 bg-white p-4">
       {isWalking ? (
