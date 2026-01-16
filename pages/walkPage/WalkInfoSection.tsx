@@ -50,7 +50,7 @@ export default function WalkInfoSection() {
 
   useEffect(() => {
     if (isWalking) {
-      console.log("📊 totalDistance 변경됨:", totalDistance, "m");
+      // console.log("📊 totalDistance 변경됨:", totalDistance, "m");
     }
   }, [totalDistance, isWalking]);
 
