@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Pedometer } from "expo-sensors";
 import { Platform } from "react-native";
+import { useWalkStore } from "../stores/useWalkStore";
 
 type StepCountSubscription = {
   remove: () => void;
@@ -10,12 +11,14 @@ export function useStepCounter(isWalking: boolean) {
   const [steps, setSteps] = useState(0);
   const [isAvailable, setIsAvailable] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
+  const [initialSteps, setInitialSteps] = useState<number | null>(null); 
+  const { saveInitialSteps } = useWalkStore();
   const subscriptionRef = useRef<StepCountSubscription | null>(null);
   const initialStepsRef = useRef<number>(0);
   const isInitializedRef = useRef<boolean>(false);
 
-  // Pedometer 사용 가능 여부 및 권한 확인
   useEffect(() => {
+    // Pedometer 사용 가능 여부 및 권한 확인
     const checkAvailability = async () => {
       const available = await Pedometer.isAvailableAsync();
       setIsAvailable(available);
@@ -48,6 +51,7 @@ export function useStepCounter(isWalking: boolean) {
         subscriptionRef.current = null;
       }
       setSteps(0);
+      setInitialSteps(null);
       initialStepsRef.current = 0;
       isInitializedRef.current = false;
       return;
@@ -64,6 +68,11 @@ export function useStepCounter(isWalking: boolean) {
           if (!isInitializedRef.current) {
             // 첫 번째 콜백에서 기준점 설정
             initialStepsRef.current = result.steps;
+            setInitialSteps(result.steps);
+            
+            // 기준점 설정되면 저장
+            saveInitialSteps(result.steps);
+
             isInitializedRef.current = true;
             setSteps(0);
             return;
@@ -93,5 +102,6 @@ export function useStepCounter(isWalking: boolean) {
   return {
     steps,
     isAvailable,
+    initialSteps,
   };
 }
