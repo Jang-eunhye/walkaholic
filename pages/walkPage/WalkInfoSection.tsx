@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWalkStore } from "../../stores/useWalkStore";
 import { calculateElapsedTime } from "../../utils/time/calculateElapsedTime";
 import { formatTime } from "../../utils/time/formatTime";
@@ -7,29 +7,52 @@ import { useLocationTracking } from "../../hooks/useLocationTracking";
 import { useStepCounter } from "../../hooks/useStepCounter";
 
 export default function WalkInfoSection() {
-  const { isWalking, startTime } = useWalkStore();
+  const { isWalking, startTime, saveDistance, distance } = useWalkStore();
   const [elapsedTime, setElapsedTime] = useState(0);
-  const { totalDistance } = useLocationTracking(isWalking);
+  const { totalDistance } = useLocationTracking(isWalking, distance || 0);
   const { steps, isAvailable } = useStepCounter(isWalking);
+  const distanceRef = useRef(totalDistance); // ref 추가
 
-  // 칼로리 계산 (걸음수 기반 추정)
-  // 평균: 1걸음 = 0.04kcal (체중, 속도 등에 따라 다름)
-  const calories = Math.round(steps * 0.04);
+  // totalDistance 변경 감지
+  useEffect(() => {
+    distanceRef.current = totalDistance;
+  }, [totalDistance]);
 
+  // 경과 시간 업데이트 + 거리 저장 (1분마다)
   useEffect(() => {
     if (!isWalking || !startTime) {
-      setElapsedTime(0);
       return;
     }
 
-    // 1분마다 경과 시간 업데이트
     const interval = setInterval(() => {
+      // 경과 시간 업데이트
       const elapsed = calculateElapsedTime(startTime);
       setElapsedTime(elapsed);
-    }, 60000);
 
-    return () => clearInterval(interval);
+      // 거리 저장
+      // 거리 저장
+      console.log("⏰ Interval 실행 (1분마다)");
+      console.log(
+        "  - Interval 내부에서 본 totalDistance:",
+        totalDistance,
+        "m"
+      );
+      console.log("  - ref에서 가져온 최신 totalDistance:", distanceRef.current, "m");
+      console.log("  - 저장할 거리:", distanceRef.current, "m");
+      saveDistance(distanceRef.current);
+    }, 60000); // 1분마다
+
+    return () => {
+      console.log("🧹 Interval 정리");
+      clearInterval(interval);
+    };
   }, [isWalking, startTime]);
+
+  useEffect(() => {
+    if (isWalking) {
+      console.log("📊 totalDistance 변경됨:", totalDistance, "m");
+    }
+  }, [totalDistance, isWalking]);
 
   // 미터를 킬로미터로 변환 (소수점 2자리)
   const distanceKm = (totalDistance / 1000).toFixed(1);
@@ -41,7 +64,7 @@ export default function WalkInfoSection() {
       <Text>
         총 걸음수: {isAvailable ? `${steps.toLocaleString()}걸음` : "-"}
       </Text>
-      <Text>칼로리 소모량: {calories}kcal</Text>
+      <Text>칼로리 소모량: {Math.round(steps * 0.04)}kcal</Text>
     </View>
   );
 }

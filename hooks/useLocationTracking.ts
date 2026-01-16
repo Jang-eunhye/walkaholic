@@ -2,13 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import { calculateDistance } from "../utils/location/calculateDistance";
 
-const MAX_DISTANCE_PER_UPDATE = 20; // meters - GPS 튐 방지
-const MAX_SPEED = 6; // m/s - 걷기/뛰기 범위 초과 시 무시
-const MAX_ACCURACY = 20; // meters - 정확도가 나쁜 경우 무시
-const MIN_DISTANCE = 3; // meters - GPS 오차 제거
+// 테스트용 설정값
+const MAX_DISTANCE_PER_UPDATE = 1000; // meters - GPS 튐 방지
+const MAX_SPEED = 1000; // m/s - 걷기/뛰기 범위 초과 시 무시
+const MAX_ACCURACY = 1000; // meters - 정확도가 나쁜 경우 무시
+const MIN_DISTANCE = 0; // meters - GPS 오차 제거
 
-export function useLocationTracking(isWalking: boolean) {
-  const [totalDistance, setTotalDistance] = useState(0);
+// const MAX_DISTANCE_PER_UPDATE = 20; // meters - GPS 튐 방지
+// const MAX_SPEED = 6; // m/s - 걷기/뛰기 범위 초과 시 무시
+// const MAX_ACCURACY = 20; // meters - 정확도가 나쁜 경우 무시
+// const MIN_DISTANCE = 3; // meters - GPS 오차 제거
+
+export function useLocationTracking(isWalking: boolean, initialDistance: number = 0) {
+  const [totalDistance, setTotalDistance] = useState(initialDistance);
   const [currentLocation, setCurrentLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -32,6 +38,11 @@ export function useLocationTracking(isWalking: boolean) {
       return;
     }
 
+    // ✅ 초기 거리 설정 (앱 재시작 시 복구)
+    // if (initialDistance > 0) {
+    //   setTotalDistance(initialDistance);
+    // }
+
     const startTracking = async () => {
       try {
         // console.log("위치 추적 시작 시도...");
@@ -45,7 +56,7 @@ export function useLocationTracking(isWalking: boolean) {
 
         subscriptionRef.current = await Location.watchPositionAsync(
           {
-            accuracy: Location.Accuracy.High,
+            accuracy: Location.Accuracy.Highest,
             timeInterval: 3000,
             distanceInterval: 5,
           },

@@ -11,23 +11,21 @@ export function useStepCounter(isWalking: boolean) {
   const [steps, setSteps] = useState(0);
   const [isAvailable, setIsAvailable] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  const [initialSteps, setInitialSteps] = useState<number | null>(null); 
-  const { saveInitialSteps } = useWalkStore();
-  const subscriptionRef = useRef<StepCountSubscription | null>(null);
+  const [initialSteps, setInitialSteps] = useState<number | null>(null);
+  const { saveInitialSteps, initialSteps: savedInitialSteps } = useWalkStore();
+  
   const initialStepsRef = useRef<number>(0);
+  const subscriptionRef = useRef<StepCountSubscription | null>(null);
   const isInitializedRef = useRef<boolean>(false);
 
+  // Pedometer 사용 가능 여부 및 권한 확인
   useEffect(() => {
-    // Pedometer 사용 가능 여부 및 권한 확인
     const checkAvailability = async () => {
       const available = await Pedometer.isAvailableAsync();
       setIsAvailable(available);
 
-      if (!available) {
-        return;
-      }
+      if (!available) return;
 
-      // Android에서 권한 요청
       if (Platform.OS === 'android') {
         try {
           const { status } = await Pedometer.requestPermissionsAsync();
@@ -36,7 +34,7 @@ export function useStepCounter(isWalking: boolean) {
           setHasPermission(false);
         }
       } else {
-        setHasPermission(true); // iOS는 자동 처리
+        setHasPermission(true);
       }
     };
 
@@ -61,30 +59,41 @@ export function useStepCounter(isWalking: boolean) {
       return;
     }
 
+    // 저장된 기준점이 있으면 사용 (앱 재시작 시)
+    if (savedInitialSteps !== null && !isInitializedRef.current) {
+      initialStepsRef.current = savedInitialSteps;
+      setInitialSteps(savedInitialSteps);
+      isInitializedRef.current = true;
+    }
+
     // 실시간 걸음수 추적
     const startTracking = () => {
       try {
         subscriptionRef.current = Pedometer.watchStepCount((result) => {
+          // 기준점이 설정되지 않았으면 설정
           if (!isInitializedRef.current) {
-            // 첫 번째 콜백에서 기준점 설정
-            initialStepsRef.current = result.steps;
-            setInitialSteps(result.steps);
+            // 저장된 기준점이 없을 때만 현재 걸음수를 기준점으로 사용
+            const baseSteps = savedInitialSteps !== null ? savedInitialSteps : result.steps;
             
-            // 기준점 설정되면 저장
-            saveInitialSteps(result.steps);
-
+            initialStepsRef.current = baseSteps;
+            setInitialSteps(baseSteps);
+            
+            // 저장된 기준점이 없을 때만 저장 (새로운 산책)
+            if (savedInitialSteps === null) {
+              saveInitialSteps(result.steps);
+            }
+            
             isInitializedRef.current = true;
             setSteps(0);
             return;
           }
 
-          // 이후 콜백에서는 차이 계산
+          // 기준점 설정 후 차이 계산
           const currentSteps = result.steps - initialStepsRef.current;
-          const finalSteps = Math.max(0, currentSteps);
-          setSteps(finalSteps);
+          setSteps(Math.max(0, currentSteps));
         });
       } catch (error) {
-        // 에러 처리 (필요시)
+        console.error("만보기 추적 시작 실패:", error);
       }
     };
 
@@ -95,9 +104,8 @@ export function useStepCounter(isWalking: boolean) {
         subscriptionRef.current.remove();
         subscriptionRef.current = null;
       }
-      isInitializedRef.current = false;
     };
-  }, [isWalking, isAvailable, hasPermission]);
+  }, [isWalking, isAvailable, hasPermission, savedInitialSteps, saveInitialSteps]);
 
   return {
     steps,
