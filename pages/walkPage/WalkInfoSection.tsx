@@ -30,27 +30,16 @@ export default function WalkInfoSection() {
       setElapsedTime(elapsed);
 
       // 거리 저장
-      // 거리 저장
-      console.log("⏰ Interval 실행 (1분마다)");
-      console.log(
-        "  - Interval 내부에서 본 totalDistance:",
-        totalDistance,
-        "m"
-      );
-      console.log("  - ref에서 가져온 최신 totalDistance:", distanceRef.current, "m");
-      console.log("  - 저장할 거리:", distanceRef.current, "m");
       saveDistance(distanceRef.current);
     }, 60000); // 1분마다
 
     return () => {
-      console.log("🧹 Interval 정리");
       clearInterval(interval);
     };
   }, [isWalking, startTime]);
 
   useEffect(() => {
     if (isWalking) {
-      // console.log("📊 totalDistance 변경됨:", totalDistance, "m");
     }
   }, [totalDistance, isWalking]);
 

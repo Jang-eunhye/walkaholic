@@ -45,14 +45,12 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
 
     const startTracking = async () => {
       try {
-        // console.log("위치 추적 시작 시도...");
         
         const { granted } = await Location.requestForegroundPermissionsAsync();
         if (!granted) {
           console.warn("위치 권한이 거부되었습니다.");
           return;
         }
-        // console.log("위치 권한 허용됨, watchPositionAsync 시작...");
 
         subscriptionRef.current = await Location.watchPositionAsync(
           {
@@ -105,7 +103,6 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
           }
         );
         
-        // console.log("watchPositionAsync 설정 완료");
       } catch (error) {
         console.error("위치 추적 시작 실패:", error);
       }

@@ -68,12 +68,7 @@ export const useWalkStore = create<WalkState>((set) => ({
         AsyncStorage.getItem(STORAGE_KEY_INITIAL_STEPS),
         AsyncStorage.getItem(STORAGE_KEY_DISTANCE),
       ]);
-
-      console.log("saved:", saved);
-      console.log("시작 시간:", savedStartTime);
-      console.log("기준 걸음수:", savedInitialSteps);
-      console.log("총 거리:", savedDistance);
-
+      
       if (saved === "true" && savedStartTime) {
         set({
           isWalking: true,
