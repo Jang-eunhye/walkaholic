@@ -54,20 +54,18 @@ export function useLocationTracking(isWalking: boolean) {
             
             // 1. 정확도 검증
             if (accuracy && accuracy > MAX_ACCURACY) {
-              // console.log("🚫 정확도 나쁨:", accuracy.toFixed(2), "m");
-              return;
+              return; // 신뢰 불가 → previousLocation 업데이트 안 함
             }
-
-            // 2. 속도 검증 (비정상적인 속도 제거)
+        
+            // 2. 속도 검증
             const currentSpeed = speed ?? 0;
             if (currentSpeed > MAX_SPEED) {
-              // console.log("🚫 비정상 speed:", currentSpeed.toFixed(2), "m/s");
-              return;
+              return; // 신뢰 불가 → previousLocation 업데이트 안 함
             }
-
+        
             const newLocation = { latitude, longitude };
             setCurrentLocation(newLocation);
-
+        
             // 이전 위치가 있으면 거리 계산
             if (previousLocationRef.current) {
               const distance = calculateDistance(
@@ -76,26 +74,23 @@ export function useLocationTracking(isWalking: boolean) {
                 latitude,
                 longitude
               );
-
-              // 3. GPS 튐 검증 (한 번에 너무 큰 거리 변화)
+        
+              // 3. GPS 튐 검증
               if (distance > MAX_DISTANCE_PER_UPDATE) {
-                // console.log("🚫 GPS 튐 컷:", distance.toFixed(2), "m");
-                return;
+                return; // 신뢰 불가 → previousLocation 업데이트 안 함
               }
-
-              // 4. 최소 거리 필터링 (GPS 오차 제거)
+        
+              // 4. 최소 거리 필터링
               if (distance > MIN_DISTANCE) {
-                // console.log("✅ 거리 추가:", distance.toFixed(2), "m", `(속도: ${currentSpeed.toFixed(2)} m/s, 정확도: ${accuracy?.toFixed(2) ?? 'N/A'} m)`);
                 setTotalDistance((prev) => prev + distance);
-              } else {
-                // console.log("⚠️ 거리 너무 작음 (GPS 오차):", distance.toFixed(2), "m");
+                // ✅ 거리 추가된 경우에만 previousLocation 업데이트
+                previousLocationRef.current = newLocation;
               }
+              // MIN_DISTANCE 미만이면 previousLocation 업데이트 안 함
             } else {
-              // console.log("📍 첫 번째 위치 설정됨");
+              // 첫 번째 위치는 항상 저장
+              previousLocationRef.current = newLocation;
             }
-
-            // 현재 위치를 이전 위치로 저장
-            previousLocationRef.current = newLocation;
           }
         );
         
