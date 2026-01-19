@@ -7,43 +7,32 @@ import { useLocationTracking } from "../../hooks/useLocationTracking";
 import { useStepCounter } from "../../hooks/useStepCounter";
 
 export default function WalkInfoSection() {
-  const { isWalking, startTime, saveDistance, distance } = useWalkStore();
+  const { isWalking, startTime, saveDistance, distance, steps } = useWalkStore();
   const [elapsedTime, setElapsedTime] = useState(0);
   const { totalDistance } = useLocationTracking(isWalking, distance || 0);
-  const { steps, isAvailable } = useStepCounter(isWalking);
-  const distanceRef = useRef(totalDistance); // ref 추가
+  const { isAvailable } = useStepCounter(isWalking);
+  const distanceRef = useRef(totalDistance);
 
-  // totalDistance 변경 감지
   useEffect(() => {
     distanceRef.current = totalDistance;
   }, [totalDistance]);
 
-  // 경과 시간 업데이트 + 거리 저장 (1분마다)
   useEffect(() => {
     if (!isWalking || !startTime) {
       return;
     }
 
     const interval = setInterval(() => {
-      // 경과 시간 업데이트
       const elapsed = calculateElapsedTime(startTime);
       setElapsedTime(elapsed);
-
-      // 거리 저장
       saveDistance(distanceRef.current);
-    }, 60000); // 1분마다
+    }, 60000);
 
     return () => {
       clearInterval(interval);
     };
   }, [isWalking, startTime]);
 
-  useEffect(() => {
-    if (isWalking) {
-    }
-  }, [totalDistance, isWalking]);
-
-  // 미터를 킬로미터로 변환 (소수점 2자리)
   const distanceKm = (totalDistance / 1000).toFixed(1);
 
   return (

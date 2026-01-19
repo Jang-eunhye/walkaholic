@@ -7,7 +7,7 @@ export default function WalkButtonSection() {
 
   const handlePress = () => {
     if (isWalking) {
-      stopWalk();
+      stopWalk(); // 파라미터 없이 호출
     } else {
       startWalk();
     }

@@ -8,15 +8,13 @@ type StepCountSubscription = {
 };
 
 export function useStepCounter(isWalking: boolean) {
-  const [steps, setSteps] = useState(0);
   const [isAvailable, setIsAvailable] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  const { startTime } = useWalkStore();
+  const { startTime, saveSteps } = useWalkStore();
   
   const subscriptionRef = useRef<StepCountSubscription | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Pedometer 사용 가능 여부 및 권한 확인
   useEffect(() => {
     const checkAvailability = async () => {
       const available = await Pedometer.isAvailableAsync();
@@ -39,9 +37,7 @@ export function useStepCounter(isWalking: boolean) {
     checkAvailability();
   }, []);
 
-  // 산책 추적 로직
   useEffect(() => {
-    // 산책 중이 아님
     if (!isWalking || !startTime) {
       if (subscriptionRef.current) {
         subscriptionRef.current.remove();
@@ -51,18 +47,16 @@ export function useStepCounter(isWalking: boolean) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      setSteps(0);
+      saveSteps(0);
       return;
     }
 
-    // 가능 여부 체크
     if (!isAvailable || !hasPermission) {
       return;
     }
 
-    // watchStepCount는 watch 시작 시점부터의 걸음수를 반환
     subscriptionRef.current = Pedometer.watchStepCount((result) => {
-      setSteps(result.steps);
+      saveSteps(result.steps); // store에 저장
     });
 
     return () => {
@@ -71,10 +65,9 @@ export function useStepCounter(isWalking: boolean) {
         subscriptionRef.current = null;
       }
     };
-  }, [isWalking, isAvailable, hasPermission, startTime]);
+  }, [isWalking, isAvailable, hasPermission, startTime, saveSteps]);
 
   return {
-    steps,
     isAvailable,
   };
 }
