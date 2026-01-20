@@ -26,7 +26,7 @@ export default function WalkInfoSection() {
       const elapsed = calculateElapsedTime(startTime);
       setElapsedTime(elapsed);
       saveDistance(distanceRef.current);
-    }, 60000);
+    }, 10000);
 
     return () => {
       clearInterval(interval);

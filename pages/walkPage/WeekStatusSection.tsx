@@ -1,11 +1,22 @@
 import { View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { useWalkStore } from "../../stores/useWalkStore";
 
-// 더미 데이터: true = 산책 완료, false = 산책 안함
-const weekWalkData = [true, true, false, true, false, false, true];
 const weekDays = ["월", "화", "수", "목", "금", "토", "일"];
 
 export default function WeekStatusSection() {
+  const [weeklyKm, setWeeklyKm] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
+  const getWeeklyStats = useWalkStore((state) => state.getWeeklyStats);
+
+  useEffect(() => {
+    const loadWeeklyStats = async () => {
+      const stats = await getWeeklyStats();
+      setWeeklyKm(stats);
+    };
+    loadWeeklyStats();
+  }, [getWeeklyStats]);
+  
   return (
     <View className="flex-1">
       {/*날짜 영역*/}
@@ -18,14 +29,14 @@ export default function WeekStatusSection() {
       {/*이번주 산책 현황*/}
       <View className="flex-[2] bg-yellow-200 items-center justify-center">
         <View className="flex-row justify-between items-center w-full px-4">
-          {weekWalkData.map((completed, index) => (
+          {weeklyKm.map((km, index) => (
             <View key={index} className="items-center">
               <Text className="text-sm font-bold text-gray-800 mb-1">
                 {weekDays[index]}
               </Text>
               <MaterialCommunityIcons
                 name={
-                  completed
+                  km > 0
                     ? "checkbox-marked-circle"
                     : "checkbox-blank-circle-outline"
                 }

@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getWeeklyStats as calculateWeeklyStats } from "../utils/stats/walkStats";
+import { getMonthKey } from "../utils/date/calculateWeeks";
 
 interface WalkState {
   isWalking: boolean;
@@ -11,6 +13,7 @@ interface WalkState {
   saveSteps: (steps: number) => void;
   stopWalk: () => Promise<void>;
   loadWalkState: () => Promise<void>;
+  getWeeklyStats: () => Promise<number[]>;
 }
 
 interface CurrentWalkData {
@@ -28,12 +31,6 @@ interface WalkHistoryItem {
 
 const STORAGE_KEY_CURRENT_WALK = "@walkaholic:currentWalk";
 const STORAGE_KEY_HISTORY_PREFIX = "@walkaholic:walkHistory:";
-
-const getMonthKey = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  return `${year}-${month}`;
-};
 
 export const useWalkStore = create<WalkState>((set, get) => ({
   isWalking: false,
@@ -109,9 +106,10 @@ export const useWalkStore = create<WalkState>((set, get) => ({
 
       history.push(historyItem);
       await AsyncStorage.setItem(historyStorageKey, JSON.stringify(history));
-    } catch (error) {
-      console.error("Failed to save walk history:", error);
-    }
+} catch (error) {
+console.error("Failed to save walk history:", error);
+}
+
 
     set({
       isWalking: false,
@@ -139,5 +137,9 @@ export const useWalkStore = create<WalkState>((set, get) => ({
     } catch (error) {
       console.error("Failed to load walk state:", error);
     }
+  },
+
+  getWeeklyStats: async () => {
+    return await calculateWeeklyStats();
   },
 }));

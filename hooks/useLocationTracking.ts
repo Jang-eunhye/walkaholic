@@ -38,11 +38,6 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
       return;
     }
 
-    // ✅ 초기 거리 설정 (앱 재시작 시 복구)
-    // if (initialDistance > 0) {
-    //   setTotalDistance(initialDistance);
-    // }
-
     const startTracking = async () => {
       try {
         
@@ -55,7 +50,7 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
         subscriptionRef.current = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Highest,
-            timeInterval: 3000,
+            timeInterval: 1000,
             distanceInterval: 5,
           },
           (location) => {
