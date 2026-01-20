@@ -43,6 +43,9 @@ export default function WeekStatusSection() {
                 size={36}
                 color="green"
               />
+              <Text className="text-xs text-gray-600 mt-1">
+                {km > 0 ? `${km.toFixed(1)}km` : ""}
+              </Text>
             </View>
           ))}
         </View>
