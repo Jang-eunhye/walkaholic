@@ -1,10 +1,8 @@
 import { View } from "react-native";
 import WeekStatusSection from "./walkPage/WeekStatusSection";
-import IconSection from "./walkPage/IconSection";
 import WalkButtonSection from "./walkPage/WalkButtonSection";
 import WalkInfoSection from "./walkPage/WalkInfoSection";
 import { useWalkStore } from "../stores/useWalkStore";
-import { useStepCounter } from "../hooks/useStepCounter";
 
 export default function WalkPage() {
   const { isWalking } = useWalkStore();
