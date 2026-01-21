@@ -36,7 +36,7 @@ export default function WalkInfoSection() {
   const distanceKm = (totalDistance / 1000).toFixed(1);
 
   return (
-    <View className="flex-1 bg-red-200">
+    <View className="flex-1">
       <Text>산책 경과 시간: {formatTime(elapsedTime)}</Text>
       <Text>총 거리: {distanceKm}km</Text>
       <Text>

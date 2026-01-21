@@ -23,14 +23,14 @@ export default function WeekStatusSection() {
   return (
       <View className="flex-1">
         {/*날짜 영역*/}
-        <View className="flex-1 bg-red-200 justify-center">
+        <View className="flex-1 justify-center">
           <Text className="text-2xl font-bold text-gray-800">
             2026년 1월 첫째주
           </Text>
         </View>
 
         {/*이번주 산책 현황*/}
-        <View className="flex-[2] bg-yellow-200 items-center justify-center">
+        <View className="flex-[2] border border-gray-300 rounded-xl items-center justify-center">
           <View className="flex-row justify-between items-center w-full px-4">
             {weeklyKm.map((km, index) => (
               <View key={index} className="items-center">
@@ -54,7 +54,7 @@ export default function WeekStatusSection() {
           </View>
         </View>
 
-        <View className="flex-[12] bg-green-200 items-center justify-center">
+        <View className="flex-[12] items-center justify-center">
           <IconSection iconLevel={iconLevel} />
         </View>
       </View>

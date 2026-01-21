@@ -6,10 +6,10 @@ export default function IconSection({ iconLevel }: { iconLevel: number }) {
   const iconName = iconNames[iconLevel];
   
   return (
-    <View className="w-full items-center justify-center">
+    <View className="items-center border border-gray-300 rounded-full p-8 justify-center">
       <MaterialCommunityIcons 
         name={iconName} 
-        size={200} 
+        size={160} 
         color="green" 
       />
     </View>

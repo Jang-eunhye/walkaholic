@@ -8,7 +8,7 @@ export default function WalkPage() {
   const { isWalking } = useWalkStore();
   
   return (
-    <View className="flex-1 bg-white p-4">
+    <View className="flex-1 p-4">
       {isWalking ? (
         <View className="flex-[5]">
           <WalkInfoSection />
@@ -21,7 +21,7 @@ export default function WalkPage() {
       )}
 
       {/*산책 시작/종료 버튼*/}
-      <View className="flex-1 bg-blue-200 items-center justify-center">
+      <View className="flex-1 items-center justify-center">
         <WalkButtonSection />
       </View>
     </View>
