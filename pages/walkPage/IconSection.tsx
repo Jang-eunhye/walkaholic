@@ -1,10 +1,13 @@
 import { View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function IconSection() {
+export default function IconSection({ iconLevel }: { iconLevel: number }) {
+  const iconNames = ["seed", "sprout", "flower", "tree", "forest"];
+  const iconName = iconNames[iconLevel];
+  
   return (
     <View className="w-full items-center justify-center">
-      <Ionicons name="heart-circle-outline" size={200} color="green" />
+      <MaterialCommunityIcons name={iconName as any} size={200} color="green" />
     </View>
   );
 }
