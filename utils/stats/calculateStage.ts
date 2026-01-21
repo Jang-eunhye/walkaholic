@@ -4,10 +4,10 @@
  * @returns stage (1~5)
  */
 export const calculateStage = (totalDistance: number): number => {
-  if (totalDistance < 1000) return 0; // 씨앗
-  if (totalDistance < 4000) return 1; // 새싹 
-  if (totalDistance < 8000) return 2; // 꽃
-  if (totalDistance < 12000) return 3; // 나무
-  if (12000 <= totalDistance) return 4; // 숲
+  if (totalDistance < 1) return 0; // 씨앗
+  if (totalDistance < 4) return 1; // 새싹 
+  if (totalDistance < 8) return 2; // 꽃
+  if (totalDistance < 12) return 3; // 나무
+  if (12 <= totalDistance) return 4; // 숲
   return 4;
 };

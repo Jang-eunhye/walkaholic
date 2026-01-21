@@ -52,7 +52,7 @@ export const getWeeklyStats = async (): Promise<number[]> => {
       if (itemDate >= weekStart && itemDate <= weekEnd) {
         const dayOfWeek = itemDate.getDay();
         const index = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-        weeklyData[index] += item.distance;
+        weeklyData[index] += item.distance / 1000;
       }
     });
   } catch (error) {
