@@ -5,6 +5,7 @@ import { useWalkStore } from "../../stores/useWalkStore";
 import IconSection from "./IconSection";
 import { calculateStage } from "../../utils/stats/calculateStage";
 import { formatDistance } from "../../utils/format/formatStats";
+import { formatWeekRange } from "../../utils/date/calculateWeeks";
 
 const weekDays = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -26,7 +27,7 @@ export default function WeekStatusSection() {
         {/*날짜 영역*/}
         <View className="flex-1 justify-center">
           <Text className="text-2xl font-bold text-gray-800">
-            2026년 1월 첫째주
+            {formatWeekRange()}
           </Text>
         </View>
 
