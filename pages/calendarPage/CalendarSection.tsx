@@ -177,11 +177,11 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
   return (
     <View className="bg-white rounded-3xl p-5 shadow-sm border border-gray-200 flex-1">
       {/* 헤더 - 년월 및 네비게이션 */}
-      <View className="flex-row items-center justify-between mb-5">
+      <View className="flex-row items-center justify-between mb-6">
         <TouchableOpacity onPress={goToPrevMonth} className="p-2">
           <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-gray-900">
+        <Text className="text-2xl font-semibold text-gray-900">
           {year}년 {month + 1}월
         </Text>
         <TouchableOpacity onPress={goToNextMonth} className="p-2">
@@ -214,7 +214,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
         const stage = getGrowthStage(totalKm);
         
         return (
-          <View key={weekIndex} className=" border-b border-gray-200 flex-row items-center mb-1">
+          <View key={weekIndex} className="border-b border-gray-200 flex-row items-center mb-1">
             {/* 날짜들 */}
             {week.days.map((day, dayIndex) => {
               const walked = isWalked(day);
