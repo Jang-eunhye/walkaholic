@@ -1,18 +1,11 @@
 import { View, Text, Image } from "react-native";
 import { WeatherData } from "../../utils/weather/getWeatherData";
 import { formatTemperature } from "../../utils/format/formatWeather";
+import { getAqiText } from "../../utils/weather/aqi";
 
 interface WeatherInfoSectionProps {
   weatherData: WeatherData | null;
 }
-
-// AQI 등급 텍스트 매핑 (1~5 사용)
-const AQI_LABELS = ["", "좋음", "보통", "나쁨", "매우 나쁨", "최악"];
-
-// AQI 등급 텍스트 변환 함수
-const getAqiText = (aqi: number) => {
-  return AQI_LABELS[aqi] || "-";
-};
 
 export default function WeatherInfoSection({
   weatherData,
