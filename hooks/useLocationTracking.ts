@@ -51,7 +51,8 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
           {
             accuracy: Location.Accuracy.Highest,
             timeInterval: 1000,
-            distanceInterval: 5,
+            // distanceInterval: 5,
+            distanceInterval: 0,
           },
           (location) => {
             const { latitude, longitude, accuracy, speed } = location.coords;
