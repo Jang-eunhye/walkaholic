@@ -25,7 +25,7 @@ interface MonthlyStats {
 
 export default function CalendarPage() {
   const [selectedMonth, setSelectedMonth] = useState<string>(getMonthKey(new Date()));
-  const [markedDates, setMarkedDates] = useState<Record<string, { marked: boolean; dotColor: string }>>({});
+  const [markedDates, setMarkedDates] = useState<Record<string, { selected: boolean; selectedColor: string }>>({});
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats>({
     count: 0,
     totalDuration: 0,
@@ -43,7 +43,7 @@ export default function CalendarPage() {
           key.startsWith(STORAGE_KEY_HISTORY_PREFIX)
         );
 
-        const markedDatesMap: Record<string, { marked: boolean; dotColor: string }> = {};
+        const markedDatesMap: Record<string, { selected: boolean; selectedColor: string }> = {};
 
         for (const key of historyKeys) {
           const historyData = await AsyncStorage.getItem(key);
@@ -52,7 +52,7 @@ export default function CalendarPage() {
             history.forEach((item) => {
               const date = new Date(item.startTime);
               const dateString = date.toISOString().split("T")[0];
-              markedDatesMap[dateString] = { marked: true, dotColor: "green" };
+              markedDatesMap[dateString] = { selected: true, selectedColor: "#10B981" };
             });
           }
         }

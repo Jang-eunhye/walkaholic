@@ -2,6 +2,7 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getWeeklyStats as calculateWeeklyStats } from "../utils/stats/walkStats";
 import { getMonthKey } from "../utils/date/calculateWeeks";
+import { WalkHistoryItem } from "../utils/types/walk";
 
 interface WalkState {
   isWalking: boolean;
@@ -21,16 +22,8 @@ interface CurrentWalkData {
   distance: number;
 }
 
-interface WalkHistoryItem {
-  startTime: number;
-  duration: number;
-  distance: number;
-  steps: number;
-  calories: number;
-}
-
 const STORAGE_KEY_CURRENT_WALK = "@walkaholic:currentWalk";
-const STORAGE_KEY_HISTORY_PREFIX = "@walkaholic:walkHistory:";
+export const STORAGE_KEY_HISTORY_PREFIX = "@walkaholic:walkHistory:";
 
 export const useWalkStore = create<WalkState>((set, get) => ({
   isWalking: false,

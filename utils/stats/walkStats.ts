@@ -1,13 +1,6 @@
 import { getMonthKey, getWeekStart, getWeekEnd } from "../../utils/date/calculateWeeks";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-interface WalkHistoryItem {
-  startTime: number;
-  duration: number;
-  distance: number;
-  steps: number;
-  calories: number;
-}
+import { WalkHistoryItem } from "../types/walk";
 
 const STORAGE_KEY_HISTORY_PREFIX = "@walkaholic:walkHistory:";
 
