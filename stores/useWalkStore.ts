@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getWeeklyStats as calculateWeeklyStats } from "../utils/stats/walkStats";
 import { getMonthKey } from "../utils/date/calculateWeeks";
 import { WalkHistoryItem } from "../utils/types/walk";
+import { calculateCalories } from "../utils/stats/calculateCalories";
 
 interface WalkState {
   isWalking: boolean;
@@ -78,7 +79,7 @@ export const useWalkStore = create<WalkState>((set, get) => ({
     }
 
     const duration = Math.floor((Date.now() - startTime) / 1000);
-    const calories = Math.round(steps * 0.04);
+    const calories = calculateCalories(steps);
 
     const historyItem: WalkHistoryItem = {
       startTime,
