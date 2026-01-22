@@ -24,70 +24,67 @@ export default function StatisticsSection({ monthlyStats }: StatisticsSectionPro
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     if (hours > 0) {
-      return { value: `${hours}시간 ${minutes}`, unit: "분" };
+      return { value: `${hours}시간 ${minutes}분`};
     }
-    return { value: minutes.toString(), unit: "분" };
+    return { value: `${minutes}`, unit: "분" };
   };
 
   const timeFormatted = formatTime(monthlyStats.totalDuration);
   const distanceValue = formatDistance(monthlyStats.totalDistance).replace("km", "");
 
   return (
-    <View className="space-y-4">
-      <View className="flex-row items-center justify-between">
-        <Text className="text-lg font-semibold text-gray-900">
-          {month + 1}월 산책 통계
-        </Text>
-        <Text className="text-sm text-gray-600">
-          {year}년
-        </Text>
-      </View>
-
+    <View className="bg-white rounded-3xl p-4 shadow-sm border border-gray-200 flex-1">
       {/* Highlight Card */}
-      <View className="bg-blue-500 rounded-3xl p-6 shadow-lg">
-        <View className="flex-row items-center gap-3 mb-2">
-          <MaterialCommunityIcons name="foot-print" size={24} color="white" style={{ opacity: 0.9 }} />
-          <Text className="font-medium text-white opacity-90">이번 달 산책</Text>
+      <View className="bg-blue-500 rounded-3xl p-4 shadow-sm flex-1">
+        <View className="flex-row items-center gap-3 flex-1">
+          <MaterialCommunityIcons name="foot-print" size={16} color="white" />
+          <Text className="font-medium text-white opacity-90 text-sm">이번 달 산책</Text>
         </View>
-        <View className="flex-row items-baseline gap-2">
-          <Text className="text-5xl font-bold text-white tracking-tight">{monthlyStats.count}</Text>
-          <Text className="text-xl font-medium text-white opacity-80">회</Text>
+        <View className="flex-row items-baseline gap-2 flex-2">
+          <Text className="text-3xl font-bold text-white tracking-tight">{monthlyStats.count}</Text>
+          <Text className="text-lg font-medium text-white opacity-80">회</Text>
         </View>
-        <Text className="mt-3 text-sm text-white opacity-75">
+        <Text className="text-xs text-white opacity-75 flex-1">
           {walkMessage}
         </Text>
       </View>
 
-      {/* Stats Grid */}
-      <View className="flex-row flex-wrap gap-3">
-        <StatsCard
-          icon="map-marker-distance"
-          label="총 거리"
-          value={distanceValue}
-          unit="km"
-          colorClass="bg-blue-100 text-blue-600"
-        />
-        <StatsCard
-          icon="clock-outline"
-          label="총 시간"
-          value={timeFormatted.value}
-          unit={timeFormatted.unit}
-          colorClass="bg-amber-100 text-amber-600"
-        />
-        <StatsCard
-          icon="walk"
-          label="걸음 수"
-          value={formatNumber(monthlyStats.totalSteps)}
-          unit="걸음"
-          colorClass="bg-emerald-100 text-emerald-600"
-        />
-        <StatsCard
-          icon="fire"
-          label="소모 칼로리"
-          value={formatNumber(monthlyStats.totalCalories)}
-          unit="kcal"
-          colorClass="bg-rose-100 text-rose-600"
-        />
+      {/* Stats Grid - 2x2 고정 */}
+      <View className="mt-3 flex-2">
+        {/* 첫 번째 행 */}
+        <View className="flex-row gap-2 mb-2">
+          <StatsCard
+            icon="map-marker-distance"
+            label="총 거리"
+            value={distanceValue}
+            unit="km"
+            colorClass="bg-blue-100 text-blue-600"
+          />
+          <StatsCard
+            icon="clock-outline"
+            label="총 시간"
+            value={timeFormatted.value}
+            unit={timeFormatted.unit}
+            colorClass="bg-amber-100 text-amber-600"
+          />
+        </View>
+        {/* 두 번째 행 */}
+        <View className="flex-row gap-2">
+          <StatsCard
+            icon="walk"
+            label="걸음 수"
+            value={formatNumber(monthlyStats.totalSteps)}
+            unit="걸음"
+            colorClass="bg-emerald-100 text-emerald-600"
+          />
+          <StatsCard
+            icon="fire"
+            label="소모 칼로리"
+            value={formatNumber(monthlyStats.totalCalories)}
+            unit="kcal"
+            colorClass="bg-rose-100 text-rose-600"
+          />
+        </View>
       </View>
     </View>
   );

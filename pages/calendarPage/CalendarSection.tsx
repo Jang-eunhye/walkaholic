@@ -175,7 +175,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
   };
 
   return (
-    <View className="bg-white rounded-3xl p-5 shadow-sm border border-gray-200 mb-4">
+    <View className="bg-white rounded-3xl p-5 shadow-sm border border-gray-200 flex-1">
       {/* 헤더 - 년월 및 네비게이션 */}
       <View className="flex-row items-center justify-between mb-5">
         <TouchableOpacity onPress={goToPrevMonth} className="p-2">

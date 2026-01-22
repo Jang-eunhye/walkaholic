@@ -24,7 +24,7 @@ export default function StatsCard({ icon, label, value, unit, colorClass = "bg-b
   return (
     <View 
       className="bg-white rounded-3xl p-5 shadow-sm border border-gray-200" 
-      style={{ width: "48%" }}
+      style={{ flex: 1 }}
     >
       <View className="flex-row items-center gap-3 mb-3">
         <View className={`p-2.5 rounded-xl ${colorClass.split(" ")[0]}`}>
@@ -37,7 +37,7 @@ export default function StatsCard({ icon, label, value, unit, colorClass = "bg-b
           {typeof value === "number" ? value.toLocaleString() : value}
         </Text>
         {unit && (
-          <Text className="text-base font-medium text-gray-600">{unit}</Text>
+          <Text className="text-lg font-medium text-gray-600">{unit}</Text>
         )}
       </View>
     </View>

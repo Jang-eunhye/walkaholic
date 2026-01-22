@@ -45,14 +45,18 @@ export default function CalendarPage() {
 
   return (
     <View className="flex-1 p-4">
-      {/* 달력 영역 */}
-      <CalendarSection 
-        markedDates={markedDates}
-        onMonthChange={handleMonthChange}
-      />
+      {/* 달력 영역 - 50% */}
+      <View className="flex-1 mb-2">
+        <CalendarSection 
+          markedDates={markedDates}
+          onMonthChange={handleMonthChange}
+        />
+      </View>
 
-      {/* 통계 영역 */}
-      <StatisticsSection monthlyStats={monthlyStats} />
+      {/* 통계 영역 - 50% */}
+      <View className="flex-1">
+        <StatisticsSection monthlyStats={monthlyStats} />
+      </View>
     </View>
   );
 }
