@@ -6,6 +6,7 @@ import { formatTime } from "../../utils/time/formatTime";
 import { useLocationTracking } from "../../hooks/useLocationTracking";
 import { useStepCounter } from "../../hooks/useStepCounter";
 import { calculateCalories } from "../../utils/stats/calculateCalories";
+import { formatDistance } from "../../utils/format/formatStats";
 
 export default function WalkInfoSection() {
   const { isWalking, startTime, saveDistance, distance, steps } = useWalkStore();
@@ -34,12 +35,10 @@ export default function WalkInfoSection() {
     };
   }, [isWalking, startTime]);
 
-  const distanceKm = (totalDistance / 1000).toFixed(1);
-
   return (
     <View className="flex-1">
       <Text>산책 경과 시간: {formatTime(elapsedTime)}</Text>
-      <Text>총 거리: {distanceKm}km</Text>
+      <Text>총 거리: {formatDistance(totalDistance)}</Text>
       <Text>
         총 걸음수: {isAvailable ? `${steps.toLocaleString()}걸음` : "-"}
       </Text>

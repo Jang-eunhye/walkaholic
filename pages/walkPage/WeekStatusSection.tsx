@@ -4,18 +4,19 @@ import { useEffect, useState } from "react";
 import { useWalkStore } from "../../stores/useWalkStore";
 import IconSection from "./IconSection";
 import { calculateStage } from "../../utils/stats/calculateStage";
+import { formatDistance } from "../../utils/format/formatStats";
 
 const weekDays = ["월", "화", "수", "목", "금", "토", "일"];
 
 export default function WeekStatusSection() {
-  const [weeklyKm, setWeeklyKm] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
-  const iconLevel = calculateStage(weeklyKm.reduce((acc, km) => acc + km, 0));
+  const [weeklyMeters, setWeeklyMeters] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
+  const iconLevel = calculateStage(weeklyMeters.reduce((acc, m) => acc + m, 0) / 1000);
   const getWeeklyStats = useWalkStore((state) => state.getWeeklyStats);
 
   useEffect(() => {
     const loadWeeklyStats = async () => {
       const stats = await getWeeklyStats();
-      setWeeklyKm(stats);
+      setWeeklyMeters(stats);
     };
     loadWeeklyStats();
   }, [getWeeklyStats]);
@@ -32,14 +33,14 @@ export default function WeekStatusSection() {
         {/*이번주 산책 현황*/}
         <View className="flex-[2] border border-gray-300 rounded-xl items-center justify-center">
           <View className="flex-row justify-between items-center w-full px-4">
-            {weeklyKm.map((km, index) => (
+            {weeklyMeters.map((meters, index) => (
               <View key={index} className="items-center">
                 <Text className="text-sm font-bold text-gray-800 mb-1">
                   {weekDays[index]}
                 </Text>
                 <MaterialCommunityIcons
                   name={
-                    km > 0
+                    meters > 0
                       ? "checkbox-marked-circle"
                       : "checkbox-blank-circle-outline"
                   }
@@ -47,7 +48,7 @@ export default function WeekStatusSection() {
                   color="green"
                 />
                 <Text className="text-xs text-gray-600 mt-1">
-                  {km > 0 ? `${(km).toFixed(1)}km` : ""}
+                  {meters > 0 ? formatDistance(meters) : ""}
                 </Text>
               </View>
             ))}
