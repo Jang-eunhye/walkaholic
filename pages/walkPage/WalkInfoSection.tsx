@@ -6,7 +6,7 @@ import { formatTime } from "../../utils/time/formatTime";
 import { useLocationTracking } from "../../hooks/useLocationTracking";
 import { useStepCounter } from "../../hooks/useStepCounter";
 import { calculateCalories } from "../../utils/stats/calculateCalories";
-import { formatDistance } from "../../utils/format/formatStats";
+import { formatDistance, formatNumber } from "../../utils/format/formatStats";
 
 export default function WalkInfoSection() {
   const { isWalking, startTime, saveDistance, distance, steps } = useWalkStore();
@@ -40,7 +40,7 @@ export default function WalkInfoSection() {
       <Text>산책 경과 시간: {formatTime(elapsedTime)}</Text>
       <Text>총 거리: {formatDistance(totalDistance)}</Text>
       <Text>
-        총 걸음수: {isAvailable ? `${steps.toLocaleString()}걸음` : "-"}
+        총 걸음수: {isAvailable ? `${formatNumber(steps)}걸음` : "-"}
       </Text>
       <Text>칼로리 소모량: {calculateCalories(steps)}kcal</Text>
     </View>
