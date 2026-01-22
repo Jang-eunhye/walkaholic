@@ -1,5 +1,6 @@
 import { View, Text, Image } from "react-native";
 import { WeatherData } from "../../utils/weather/getWeatherData";
+import { formatTemperature } from "../../utils/format/formatWeather";
 
 interface WeatherInfoSectionProps {
   weatherData: WeatherData | null;
@@ -29,12 +30,12 @@ export default function WeatherInfoSection({
         )}
         <Text className="text-base font-semibold text-gray-700 mb-1">기온</Text>
         <Text className="text-4xl font-extrabold text-gray-900">
-          {weatherData?.temp ? `${weatherData.temp.toFixed(1)}°` : "-°"}
+          {weatherData?.temp ? formatTemperature(weatherData.temp) : "-°"}
         </Text>
         <Text className="text-sm font-medium text-gray-600 mt-1">
           체감{" "}
           {weatherData?.feelsLike
-            ? `${weatherData.feelsLike.toFixed(1)}°`
+            ? formatTemperature(weatherData.feelsLike)
             : "-°"}
         </Text>
       </View>
