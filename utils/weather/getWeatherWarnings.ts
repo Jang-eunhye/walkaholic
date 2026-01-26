@@ -56,3 +56,4 @@ export const getWeatherWarnings = (weatherData: WeatherData): string[] => {
   return warnings;
 };
 
+

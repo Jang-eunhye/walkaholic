@@ -7,3 +7,4 @@ export const calculateCalories = (steps: number): number => {
   return Math.round(steps * 0.04);
 };
 
+
