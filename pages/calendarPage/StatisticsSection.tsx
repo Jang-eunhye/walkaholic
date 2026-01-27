@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MonthlyStats } from "../../utils/types/walk";
+import { MonthlyStats } from "../../types/walk";
 import { formatDistance, formatNumber } from "../../utils/format/formatStats";
 import StatsCard from "./StatsCard";
 

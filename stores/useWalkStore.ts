@@ -2,7 +2,7 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getWeeklyStats as calculateWeeklyStats } from "../utils/stats/walkStats";
 import { getMonthKey } from "../utils/date/calculateWeeks";
-import { WalkHistoryItem } from "../utils/types/walk";
+import { WalkHistoryItem } from "../types/walk";
 import { calculateCalories } from "../utils/stats/calculateCalories";
 
 interface WalkState {

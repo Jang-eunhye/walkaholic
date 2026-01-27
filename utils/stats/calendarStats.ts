@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { WalkHistoryItem, MonthlyStats } from "../types/walk";
+import { WalkHistoryItem, MonthlyStats } from "../../types/walk";
 import { STORAGE_KEY_HISTORY_PREFIX } from "../../stores/useWalkStore";
 
 /**

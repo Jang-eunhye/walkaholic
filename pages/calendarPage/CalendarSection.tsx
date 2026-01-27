@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calculateStage } from "../../utils/stats/calculateStage";
 import { getWeekStart, getWeekEnd, getMonthKey } from "../../utils/date/calculateWeeks";
-import { WalkHistoryItem } from "../../utils/types/walk";
+import { WalkHistoryItem } from "../../types/walk";
 import { STORAGE_KEY_HISTORY_PREFIX } from "../../stores/useWalkStore";
 import { GROWTH_STAGES } from "../../constants/growthStages";
 

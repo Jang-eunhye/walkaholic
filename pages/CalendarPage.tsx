@@ -4,7 +4,7 @@ import CalendarSection from "./calendarPage/CalendarSection";
 import StatisticsSection from "./calendarPage/StatisticsSection";
 import { getMonthKey } from "../utils/date/calculateWeeks";
 import { formatMonthKey } from "../utils/date/formatMonthKey";
-import { MonthlyStats } from "../utils/types/walk";
+import { MonthlyStats } from "../types/walk";
 import { loadAllHistory, loadMonthlyStats } from "../utils/stats/calendarStats";
 
 export default function CalendarPage() {
