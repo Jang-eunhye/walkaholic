@@ -13,20 +13,23 @@ export default function StatisticsSection({ monthlyStats }: StatisticsSectionPro
   const walkMessage = getWalkMessage(monthlyStats.count);
 
   return (
-    <View className="bg-white rounded-3xl p-4 shadow-sm border border-gray-200 flex-1">
+    // <View className="bg-white rounded-3xl p-4 shadow-sm border border-gray-200 flex-1">
+      <>
       {/* Highlight Card */}
-      <View className="bg-mainGreen rounded-3xl p-4 shadow-sm flex-1">
+      <View className="bg-mainGreen rounded-3xl p-4 shadow-sm flex-1 ">
         <View className="flex-row items-center gap-3 flex-1">
           <MaterialCommunityIcons name="foot-print" size={16} color="white" />
-          <Text className="font-medium text-white opacity-90 text-sm">이번 달 산책</Text>
+          <Text className="font-medium text-white opacity-90 text-base">이번 달 산책</Text>
         </View>
         <View className="flex-row items-baseline gap-2 flex-2">
-          <Text className="text-3xl font-bold text-white tracking-tight">{monthlyStats.count}</Text>
-          <Text className="text-lg font-medium text-white opacity-80">회</Text>
+          <Text className="text-5xl font-bold text-white tracking-tight">{monthlyStats.count}</Text>
+          <Text className="text-2xl font-medium text-white opacity-80">회</Text>
         </View>
-        <Text className="text-xs text-white opacity-75 flex-1">
-          {walkMessage}
-        </Text>
+        <View className="flex-1 justify-center">
+          <Text className="text-base text-white opacity-75">
+            {walkMessage}
+          </Text>
+        </View>
       </View>
 
       {/* Stats Grid - 2x2 고정 */}
@@ -62,6 +65,7 @@ export default function StatisticsSection({ monthlyStats }: StatisticsSectionPro
           />
         </View>
       </View>
-    </View>
+      </>
+    // </View>
   );
 }

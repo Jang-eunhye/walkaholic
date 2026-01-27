@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Pressable } from "react-native";
 import { useMemo, useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,6 +16,7 @@ interface CalendarSectionProps {
 export default function CalendarSection({ markedDates, onMonthChange }: CalendarSectionProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [weekDistances, setWeekDistances] = useState<Record<string, number>>({});
+  const [isLegendOpen, setIsLegendOpen] = useState(false);
   const todayString = new Date().toISOString().split("T")[0];
 
   const year = currentDate.getFullYear();
@@ -169,7 +170,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
   return (
     <View className="bg-white rounded-3xl p-5 shadow-sm border border-gray-200 flex-1">
       {/* 헤더 - 년월 및 네비게이션 */}
-      <View className="flex-row items-center justify-between mb-4">
+      <View className="flex-row items-center justify-between mb-3">
         <TouchableOpacity onPress={goToPrevMonth} className="p-2">
           <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
         </TouchableOpacity>
@@ -182,7 +183,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
       </View>
 
       {/* 요일 헤더 + 아이콘 컬럼 */}
-      <View className="flex-row mb-2">
+      <View className="flex-row mb-2  items-center justify-center">
         {weekDays.map((day, index) => (
           <View key={day} className="flex-1 items-center py-2">
             <Text
@@ -195,7 +196,14 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
         ))}
         {/* 아이콘 헤더 */}
         <View className="flex-1 items-center justify-center py-2">
-          <Text className="text-xs font-semibold text-gray-400"></Text>
+          <TouchableOpacity
+            onPress={() => setIsLegendOpen(true)}
+            className="p-1"
+            accessibilityRole="button"
+            accessibilityLabel="성장 단계 범례 보기"
+          >
+            <MaterialCommunityIcons name="alert-circle-outline" size={16} color="#9CA3AF" />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -255,7 +263,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
       })}
 
       {/* 범례 */}
-      <View className="flex-row justify-center items-center mt-4 pt-4 flex-wrap gap-2">
+      {/* <View className="flex-row justify-center items-center mt-auto pt-4 flex-wrap gap-2">
         {GROWTH_STAGES.map((stage) => (
           <View key={stage.label} className="flex-row items-center mx-2">
             <MaterialCommunityIcons name={stage.icon} size={16} color={stage.color} />
@@ -264,7 +272,30 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
             </Text>
           </View>
         ))}
-      </View>
+      </View> */}
+
+      <Modal
+        transparent
+        visible={isLegendOpen}
+        animationType="fade"
+        onRequestClose={() => setIsLegendOpen(false)}
+      >
+        <Pressable className="flex-1 bg-black/40 justify-center items-center" onPress={() => setIsLegendOpen(false)}>
+          <Pressable className="bg-white rounded-2xl p-4 w-72" onPress={() => {}}>
+            <Text className="text-sm font-semibold text-gray-800 mb-3">단계별 성장 아이콘</Text>
+            <View className="flex-row flex-wrap gap-2">
+              {GROWTH_STAGES.map((stage) => (
+                <View key={stage.label} className="flex-row items-center mr-2 mb-2">
+                  <MaterialCommunityIcons name={stage.icon} size={16} color={stage.color} />
+                  <Text className="text-xs text-gray-600 ml-1">
+                    {stage.label} · {stage.minKm}km+
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

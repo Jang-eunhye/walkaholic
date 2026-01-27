@@ -53,7 +53,7 @@ export default function CalendarPage() {
       </View>
 
       {/* 통계 영역 - 50% */}
-      <View className="flex-1">
+      <View className="flex-[0.9]">
         <StatisticsSection monthlyStats={monthlyStats} />
       </View>
     </View>
