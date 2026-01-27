@@ -3,8 +3,7 @@
 import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
-import { getCurrentLocation } from "../utils/location/getCurrentLocation";
-import { getAddressFromCoordinates } from "../utils/location/getAddressFromCoordinates";
+import { getCachedLocation } from "../utils/location/getCachedLocation";
 import LocationSection from "./weatherPage/LocationSection";
 import WeatherInfoSection from "./weatherPage/WeatherInfoSection";
 import WeatherWarningSection from "./weatherPage/WeatherWarningSection";
@@ -21,23 +20,19 @@ export default function WeatherPage() {
   useEffect(() => {
     (async () => {
       // 1. 현재 위치 좌표 가져오기 (권한 요청 포함)
-      const coordinates = await getCurrentLocation();
-      if (!coordinates) {
+      const location = await getCachedLocation();
+      if (!location) {
         setLocationName("위치 권한이 거부되었습니다.");
         return;
       }
 
-      // 2. 좌표를 주소로 변환
-      const address = await getAddressFromCoordinates(
-        coordinates.latitude,
-        coordinates.longitude
-      );
-      setLocationName(address);
+      // 2. 좌표/주소 캐시 사용
+      setLocationName(location.address);
 
       // 3. 날씨 및 미세먼지 데이터 가져오기
       const fetchedWeatherData = await getWeatherData(
-        coordinates.latitude,
-        coordinates.longitude,
+        location.coordinates.latitude,
+        location.coordinates.longitude,
         API_KEY
       );
       setWeatherData(fetchedWeatherData);
