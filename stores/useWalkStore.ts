@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getWeeklyStats as calculateWeeklyStats } from "../utils/stats/walkStats";
+import { loadWeeklyStats } from "../utils/stats/walkStats";
 import { getMonthKey } from "../utils/date/calculateWeeks";
 import { WalkHistoryItem } from "../types/walk";
 import { calculateCalories } from "../utils/stats/calculateCalories";
@@ -15,7 +15,7 @@ interface WalkState {
   saveSteps: (steps: number) => void;
   stopWalk: () => Promise<void>;
   loadWalkState: () => Promise<void>;
-  getWeeklyStats: () => Promise<number[]>;
+  loadWeeklyStats: () => Promise<number[]>;
 }
 
 interface CurrentWalkData {
@@ -133,7 +133,7 @@ console.error("Failed to save walk history:", error);
     }
   },
 
-  getWeeklyStats: async () => {
-    return await calculateWeeklyStats();
+  loadWeeklyStats: async () => {
+    return await loadWeeklyStats();
   },
 }));

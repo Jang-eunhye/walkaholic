@@ -12,15 +12,15 @@ const weekDays = ["월", "화", "수", "목", "금", "토", "일"];
 export default function WeekStatusSection() {
   const [weeklyMeters, setWeeklyMeters] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
   const iconLevel = calculateStage(weeklyMeters.reduce((acc, m) => acc + m, 0) / 1000);
-  const getWeeklyStats = useWalkStore((state) => state.getWeeklyStats);
+  const loadWeeklyStats = useWalkStore((state) => state.loadWeeklyStats);
 
   useEffect(() => {
-    const loadWeeklyStats = async () => {
-      const stats = await getWeeklyStats();
+    const loadWeeklyData = async () => {
+      const stats = await loadWeeklyStats();
       setWeeklyMeters(stats);
     };
-    loadWeeklyStats();
-  }, [getWeeklyStats]);
+    loadWeeklyData();
+  }, [loadWeeklyStats]);
   
   return (
       <View className="flex-1">

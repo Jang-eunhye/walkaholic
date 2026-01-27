@@ -4,7 +4,7 @@ import { WalkHistoryItem } from "../../types/walk";
 
 const STORAGE_KEY_HISTORY_PREFIX = "@walkaholic:walkHistory:";
 
-export const getWeeklyStats = async (): Promise<number[]> => {
+export const loadWeeklyStats = async (): Promise<number[]> => {
   const today = new Date();
   const weekStart = getWeekStart(today);
   const weekEnd = getWeekEnd(today);

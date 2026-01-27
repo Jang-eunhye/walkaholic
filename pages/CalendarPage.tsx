@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import CalendarSection from "./calendarPage/CalendarSection";
 import StatisticsSection from "./calendarPage/StatisticsSection";
 import { getMonthKey } from "../utils/date/calculateWeeks";
-import { formatMonthKey } from "../utils/date/formatMonthKey";
 import { MonthlyStats } from "../types/walk";
 import { loadAllHistory, loadMonthlyStats } from "../utils/stats/calendarStats";
 
@@ -39,7 +38,7 @@ export default function CalendarPage() {
   }, [selectedMonth]);
 
   const handleMonthChange = (month: { month: number; year: number }) => {
-    const monthKey = formatMonthKey(month);
+    const monthKey = getMonthKey(new Date(month.year, month.month - 1, 1));
     setSelectedMonth(monthKey);
   };
 

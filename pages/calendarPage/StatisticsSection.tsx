@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MonthlyStats } from "../../types/walk";
 import { formatDistance, formatDuration, formatNumber, formatCalories } from "../../utils/format/formatStats";
-import getWalkMessage from "../../utils/stats/getWalkMessage";
+import { getWalkMessage } from "../../utils/stats/getWalkMessage";
 import StatsCard from "./StatsCard";
 
 interface StatisticsSectionProps {
