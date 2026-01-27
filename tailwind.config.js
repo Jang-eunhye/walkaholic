@@ -8,6 +8,14 @@ module.exports = {
     "./pages/**/*.{js,jsx,ts,tsx}",
     "./com"
   ],
+  safelist: [
+    "bg-green-400",
+    "bg-green-500",
+    "border-green-400",
+    "border-green-700",
+    "bg-[#5CBD44]",
+    "border-[#286917]",
+  ],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {},
