@@ -9,7 +9,7 @@ interface StatsCardProps {
   colorClass?: string;
 }
 
-export default function StatsCard({ icon, label, value, unit, colorClass = "bg-blue-100 text-blue-600" }: StatsCardProps) {
+export default function StatsCard({ icon, label, value, colorClass = "bg-blue-100 text-blue-600" }: StatsCardProps) {
   // colorClass에서 색상 추출
   const getIconColor = () => {
     if (colorClass.includes("blue")) return "#2563EB";
@@ -36,9 +36,6 @@ export default function StatsCard({ icon, label, value, unit, colorClass = "bg-b
         <Text className="text-3xl font-bold text-gray-900">
           {typeof value === "number" ? value.toLocaleString() : value}
         </Text>
-        {unit && (
-          <Text className="text-lg font-medium text-gray-600">{unit}</Text>
-        )}
       </View>
     </View>
   );
