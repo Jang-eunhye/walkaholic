@@ -18,6 +18,13 @@ export const formatDistance = (meters: number): string => {
 };
 
 /**
+ * 거리 포맷팅 (미터 -> km)
+ */
+export const formatCalories = (calories: number): string => {
+  return `${(calories)}kcal`;
+};
+
+/**
  * 숫자 포맷팅 (콤마 추가)
  */
 export const formatNumber = (num: number): string => {

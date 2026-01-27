@@ -8,7 +8,7 @@ export default function WalkPage() {
   const { isWalking } = useWalkStore();
   
   return (
-    <View className="flex-1 p-4">
+    <View className="flex-1 p-4 bg-white">
       {isWalking ? (
         <View className="flex-[5]">
           <WalkInfoSection />
