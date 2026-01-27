@@ -16,24 +16,32 @@ type LocationCache = {
 const LOCATION_CACHE_KEY = "@walkaholic:locationCache";
 const LOCATION_CACHE_TTL_MS = 15 * 60 * 1000;
 
-export async function getCachedLocation(): Promise<LocationCache | null> {
-  try {
-    const cached = await AsyncStorage.getItem(LOCATION_CACHE_KEY);
-    if (cached) {
-      const parsed: LocationCache = JSON.parse(cached);
-      const isFresh = Date.now() - parsed.fetchedAt < LOCATION_CACHE_TTL_MS;
-      if (
-        isFresh &&
-        parsed.coordinates &&
-        typeof parsed.coordinates.latitude === "number" &&
-        typeof parsed.coordinates.longitude === "number" &&
-        typeof parsed.address === "string"
-      ) {
-        return parsed;
+type GetCachedLocationOptions = {
+  forceRefresh?: boolean;
+};
+
+export async function getCachedLocation(
+  options: GetCachedLocationOptions = {}
+): Promise<LocationCache | null> {
+  if (!options.forceRefresh) {
+    try {
+      const cached = await AsyncStorage.getItem(LOCATION_CACHE_KEY);
+      if (cached) {
+        const parsed: LocationCache = JSON.parse(cached);
+        const isFresh = Date.now() - parsed.fetchedAt < LOCATION_CACHE_TTL_MS;
+        if (
+          isFresh &&
+          parsed.coordinates &&
+          typeof parsed.coordinates.latitude === "number" &&
+          typeof parsed.coordinates.longitude === "number" &&
+          typeof parsed.address === "string"
+        ) {
+          return parsed;
+        }
       }
+    } catch (error) {
+      console.warn("위치 캐시 읽기 실패:", error);
     }
-  } catch (error) {
-    console.warn("위치 캐시 읽기 실패:", error);
   }
 
   const coordinates = await getCurrentLocation();
