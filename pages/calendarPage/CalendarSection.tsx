@@ -219,8 +219,8 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
                 <View key={dayKey} className="flex-1 items-center py-1">
                   <View
                     className={`w-9 h-9 items-center justify-center rounded-full overflow-hidden ${
-                      walked ? "bg-[#5CBD44]" : ""
-                    } ${today ? "border-2 border-[#286917]" : ""}`}
+                      walked ? "bg-mainGreen" : ""
+                    } ${today ? "border-2 border-darkGreen" : ""}`}
                   >
                     {day && (
                       <Text

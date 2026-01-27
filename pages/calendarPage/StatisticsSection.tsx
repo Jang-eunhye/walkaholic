@@ -15,7 +15,7 @@ export default function StatisticsSection({ monthlyStats }: StatisticsSectionPro
   return (
     <View className="bg-white rounded-3xl p-4 shadow-sm border border-gray-200 flex-1">
       {/* Highlight Card */}
-      <View className="bg-blue-500 rounded-3xl p-4 shadow-sm flex-1">
+      <View className="bg-mainGreen rounded-3xl p-4 shadow-sm flex-1">
         <View className="flex-row items-center gap-3 flex-1">
           <MaterialCommunityIcons name="foot-print" size={16} color="white" />
           <Text className="font-medium text-white opacity-90 text-sm">이번 달 산책</Text>

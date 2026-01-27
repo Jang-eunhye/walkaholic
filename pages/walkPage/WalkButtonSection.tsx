@@ -17,7 +17,7 @@ export default function WalkButtonSection() {
       <TouchableOpacity
         onPress={handlePress}
         className={`rounded-full px-12 py-4 flex-row items-center justify-center ${
-          isWalking ? "bg-red-600" : "bg-green-600"
+          isWalking ? "bg-red-600" : "bg-mainGreen"
         }`}
         activeOpacity={0.5}
       >
