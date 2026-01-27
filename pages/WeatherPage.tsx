@@ -1,3 +1,5 @@
+'use client';
+
 import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";

@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useWalkStore } from "../../stores/useWalkStore";
 
 export default function WalkButtonSection() {
@@ -22,12 +21,7 @@ export default function WalkButtonSection() {
         }`}
         activeOpacity={0.5}
       >
-        <Ionicons 
-          name={isWalking ? "stop-outline" : "walk-outline"} 
-          size={24} 
-          color="white" 
-        />
-        <Text className="text-white text-xl font-bold ml-2">
+        <Text className="text-white text-2xl font-semibold ml-2">
           {isWalking ? "산책 종료" : "산책 시작"}
         </Text>
       </TouchableOpacity>
