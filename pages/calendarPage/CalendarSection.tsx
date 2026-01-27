@@ -6,20 +6,12 @@ import { calculateStage } from "../../utils/stats/calculateStage";
 import { getWeekStart, getWeekEnd, getMonthKey } from "../../utils/date/calculateWeeks";
 import { WalkHistoryItem } from "../../utils/types/walk";
 import { STORAGE_KEY_HISTORY_PREFIX } from "../../stores/useWalkStore";
+import { GROWTH_STAGES } from "../../constants/growthStages";
 
 interface CalendarSectionProps {
   markedDates: Record<string, any>;
   onMonthChange: (month: { month: number; year: number }) => void;
 }
-
-// 성장 단계 아이콘
-const GROWTH_STAGES = [
-  { icon: "seed", label: "씨앗", minKm: 0 },
-  { icon: "sprout", label: "새싹", minKm: 1 },
-  { icon: "flower", label: "꽃", minKm: 4 },
-  { icon: "tree", label: "나무", minKm: 8 },
-  { icon: "forest", label: "숲", minKm: 12 },
-] as const;
 
 export default function CalendarSection({ markedDates, onMonthChange }: CalendarSectionProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -252,11 +244,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
             {/* 주차별 성장 아이콘 */}
             <View className="flex-1 items-center py-1">
               <View className="w-9 h-9 items-center justify-center">
-                <MaterialCommunityIcons
-                  name={stage.icon as any}
-                  size={16}
-                  color="green"
-                />
+                <MaterialCommunityIcons name={stage.icon} size={16} color={stage.color} />
                 <Text className="text-[8px] text-gray-500 mt-0.5">
                   {totalKm.toFixed(1)}km
                 </Text>
@@ -270,7 +258,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
       <View className="flex-row justify-center items-center mt-4 pt-4 flex-wrap gap-2">
         {GROWTH_STAGES.map((stage) => (
           <View key={stage.label} className="flex-row items-center mx-2">
-            <MaterialCommunityIcons name={stage.icon as any} size={16} color="green" />
+            <MaterialCommunityIcons name={stage.icon} size={16} color={stage.color} />
             <Text className="text-[6px] text-gray-500 ml-0.5">
               {stage.minKm}km+
             </Text>
