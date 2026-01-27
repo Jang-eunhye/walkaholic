@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Modal, Pressable } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useMemo, useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,6 +7,7 @@ import { getWeekStart, getWeekEnd, getMonthKey } from "../../utils/date/calculat
 import { WalkHistoryItem } from "../../types/walk";
 import { STORAGE_KEY_HISTORY_PREFIX } from "../../stores/useWalkStore";
 import { GROWTH_STAGES } from "../../constants/growthStages";
+import GrowthLegendModal from "../../components/GrowthLegendModal";
 
 interface CalendarSectionProps {
   markedDates: Record<string, any>;
@@ -274,28 +275,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
         ))}
       </View> */}
 
-      <Modal
-        transparent
-        visible={isLegendOpen}
-        animationType="fade"
-        onRequestClose={() => setIsLegendOpen(false)}
-      >
-        <Pressable className="flex-1 bg-black/40 justify-center items-center" onPress={() => setIsLegendOpen(false)}>
-          <Pressable className="bg-white rounded-2xl p-4 w-72" onPress={() => {}}>
-            <Text className="text-sm font-semibold text-gray-800 mb-3">단계별 성장 아이콘</Text>
-            <View className="flex-row flex-wrap gap-2">
-              {GROWTH_STAGES.map((stage) => (
-                <View key={stage.label} className="flex-row items-center mr-2 mb-2">
-                  <MaterialCommunityIcons name={stage.icon} size={16} color={stage.color} />
-                  <Text className="text-xs text-gray-600 ml-1">
-                    {stage.label} · {stage.minKm}km+
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
+      <GrowthLegendModal visible={isLegendOpen} onClose={() => setIsLegendOpen(false)} />
     </View>
   );
 }
