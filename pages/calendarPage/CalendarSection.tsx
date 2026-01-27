@@ -169,7 +169,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
   return (
     <View className="bg-white rounded-3xl p-5 shadow-sm border border-gray-200 flex-1">
       {/* 헤더 - 년월 및 네비게이션 */}
-      <View className="flex-row items-center justify-between mb-6">
+      <View className="flex-row items-center justify-between mb-4">
         <TouchableOpacity onPress={goToPrevMonth} className="p-2">
           <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
         </TouchableOpacity>
@@ -200,20 +200,23 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
       </View>
 
       {/* 주차별 날짜 + 아이콘 */}
-      {weeksData.map((week, weekIndex) => {
+      {weeksData.map((week) => {
         const totalDistance = weekDistances[week.weekStart] || 0;
         const totalKm = totalDistance / 1000;
         const stage = getGrowthStage(totalKm);
         
         return (
-          <View key={weekIndex} className="border-b border-gray-200 flex-row items-center mb-1">
+          <View key={week.weekStart} className="border-b border-gray-200 flex-row items-center mb-1">
             {/* 날짜들 */}
             {week.days.map((day, dayIndex) => {
               const walked = isWalked(day);
               const today = isToday(day);
+              const dayKey = day
+                ? `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+                : `${week.weekStart}-empty-${dayIndex}`;
 
               return (
-                <View key={dayIndex} className="flex-1 items-center py-1">
+                <View key={dayKey} className="flex-1 items-center py-1">
                   <View
                     className={`w-9 h-9 items-center justify-center rounded-full overflow-hidden ${
                       walked ? "bg-[#5CBD44]" : ""
