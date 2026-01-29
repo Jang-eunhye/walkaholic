@@ -26,27 +26,36 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
   // 월요일 시작 요일 배열
   const weekDays = ["월", "화", "수", "목", "금", "토", "일"];
 
+  const toDateString = (date: Date) => date.toISOString().split("T")[0];
+
   // 해당 월의 주차별 데이터 계산
   const weeksData = useMemo(() => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
+    const prevMonthLastDay = new Date(year, month, 0);
     
     // 월요일 기준 첫째 날 오프셋 (0: 월요일, 6: 일요일)
     let startOffset = firstDay.getDay() - 1;
     if (startOffset < 0) startOffset = 6;
 
-    const weeks: { days: (number | null)[]; weekStart: string; weekStartDate: Date }[] = [];
-    let currentWeek: (number | null)[] = [];
+    const weeks: {
+      days: { day: number; inMonth: boolean; dateString: string }[];
+      weekStart: string;
+      weekStartDate: Date;
+    }[] = [];
+    let currentWeek: { day: number; inMonth: boolean; dateString: string }[] = [];
 
     // 첫 주 빈 칸 채우기
     for (let i = 0; i < startOffset; i++) {
-      currentWeek.push(null);
+      const day = prevMonthLastDay.getDate() - startOffset + 1 + i;
+      const date = new Date(year, month - 1, day);
+      currentWeek.push({ day, inMonth: false, dateString: toDateString(date) });
     }
 
     // 날짜 채우기
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const date = new Date(year, month, day);
-      currentWeek.push(day);
+      currentWeek.push({ day, inMonth: true, dateString: toDateString(date) });
 
       // 일요일이면 주 마감 (7일 채워짐)
       if (currentWeek.length === 7) {
@@ -59,8 +68,11 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
 
     // 마지막 주 빈 칸 채우기
     if (currentWeek.length > 0) {
+      let nextDay = 1;
       while (currentWeek.length < 7) {
-        currentWeek.push(null);
+        const date = new Date(year, month + 1, nextDay);
+        currentWeek.push({ day: nextDay, inMonth: false, dateString: toDateString(date) });
+        nextDay += 1;
       }
       // 마지막 주의 시작일 계산
       const lastDate = new Date(year, month, lastDay.getDate());
@@ -139,15 +151,11 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
     onMonthChange({ month: newDate.getMonth() + 1, year: newDate.getFullYear() });
   };
 
-  const isToday = (day: number | null) => {
-    if (!day) return false;
-    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const isToday = (dateString: string) => {
     return dateString === todayString;
   };
 
-  const isWalked = (day: number | null) => {
-    if (!day) return false;
-    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const isWalked = (dateString: string) => {
     return !!markedDates[dateString];
   };
 
@@ -211,12 +219,10 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
         return (
           <View key={week.weekStart} className="border-b border-gray-200 flex-row items-center mb-1">
             {/* 날짜들 */}
-            {week.days.map((day, dayIndex) => {
-              const walked = isWalked(day);
-              const today = isToday(day);
-              const dayKey = day
-                ? `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-                : `${week.weekStart}-empty-${dayIndex}`;
+            {week.days.map((dayItem, dayIndex) => {
+              const walked = isWalked(dayItem.dateString);
+              const today = isToday(dayItem.dateString);
+              const dayKey = dayItem.dateString;
 
               return (
                 <View key={dayKey} className="flex-1 items-center py-1">
@@ -224,21 +230,20 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
                     className={`w-9 h-9 items-center justify-center rounded-full overflow-hidden ${
                       walked ? "bg-mainGreen" : ""
                     } ${today ? "border-2 border-darkGreen" : ""}`}
+                    style={{ opacity: dayItem.inMonth ? 1 : 0.3 }}
                   >
-                    {day && (
-                      <Text
-                        className="text-base font-medium"
-                        style={{
-                          color: walked
-                            ? "#ffffff"
-                            : today
-                            ? "#059669"
-                            : getDayColor(dayIndex),
-                        }}
-                      >
-                        {day}
-                      </Text>
-                    )}
+                    <Text
+                      className="text-base font-medium"
+                      style={{
+                        color: walked
+                          ? "#ffffff"
+                          : today
+                          ? "#059669"
+                          : getDayColor(dayIndex),
+                      }}
+                    >
+                      {dayItem.day}
+                    </Text>
                   </View>
                 </View>
               );
