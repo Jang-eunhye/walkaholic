@@ -14,7 +14,7 @@ type LocationCache = {
 };
 
 const LOCATION_CACHE_KEY = "@walkaholic:locationCache";
-const LOCATION_CACHE_TTL_MS = 15 * 60 * 1000;
+const LOCATION_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24시간
 
 type GetCachedLocationOptions = {
   forceRefresh?: boolean;
