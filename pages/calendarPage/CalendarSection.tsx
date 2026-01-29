@@ -26,67 +26,6 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
   // 월요일 시작 요일 배열
   const weekDays = ["월", "화", "수", "목", "금", "토", "일"];
 
-  // 주차별 거리 로드
-  useEffect(() => {
-    const loadWeekDistances = async () => {
-      const distances: Record<string, number> = {};
-      
-      // 해당 월의 모든 일요일 찾기
-      const lastDay = new Date(year, month + 1, 0);
-      for (let day = 1; day <= lastDay.getDate(); day++) {
-        const date = new Date(year, month, day);
-        if (date.getDay() === 0) {
-          // 일요일이 속한 주의 총 거리 계산
-          const weekStart = getWeekStart(date);
-          const weekEnd = getWeekEnd(date);
-          const weekStartString = weekStart.toISOString().split("T")[0];
-          
-          try {
-            const startMonth = getMonthKey(weekStart);
-            const endMonth = getMonthKey(weekEnd);
-            
-            const monthsToCheck: string[] = [];
-            if (startMonth === endMonth) {
-              monthsToCheck.push(startMonth);
-            } else {
-              monthsToCheck.push(startMonth);
-              monthsToCheck.push(endMonth);
-            }
-            
-            const uniqueMonths = [...new Set(monthsToCheck)];
-            
-            const allHistory: WalkHistoryItem[] = [];
-            for (const monthKey of uniqueMonths) {
-              const historyStorageKey = `${STORAGE_KEY_HISTORY_PREFIX}${monthKey}`;
-              const monthHistory = await AsyncStorage.getItem(historyStorageKey);
-              if (monthHistory) {
-                const parsed: WalkHistoryItem[] = JSON.parse(monthHistory);
-                allHistory.push(...parsed);
-              }
-            }
-            
-            let totalDistance = 0;
-            allHistory.forEach((item) => {
-              const itemDate = new Date(item.startTime);
-              if (itemDate >= weekStart && itemDate <= weekEnd) {
-                totalDistance += item.distance;
-              }
-            });
-            
-            distances[weekStartString] = totalDistance;
-          } catch (error) {
-            console.error("Failed to get week total distance:", error);
-            distances[weekStartString] = 0;
-          }
-        }
-      }
-      
-      setWeekDistances(distances);
-    };
-    
-    loadWeekDistances();
-  }, [year, month]);
-
   // 해당 월의 주차별 데이터 계산
   const weeksData = useMemo(() => {
     const firstDay = new Date(year, month, 1);
@@ -96,7 +35,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
     let startOffset = firstDay.getDay() - 1;
     if (startOffset < 0) startOffset = 6;
 
-    const weeks: { days: (number | null)[]; weekStart: string }[] = [];
+    const weeks: { days: (number | null)[]; weekStart: string; weekStartDate: Date }[] = [];
     let currentWeek: (number | null)[] = [];
 
     // 첫 주 빈 칸 채우기
@@ -113,7 +52,7 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
       if (currentWeek.length === 7) {
         const weekStart = getWeekStart(date);
         const weekStartString = weekStart.toISOString().split("T")[0];
-        weeks.push({ days: currentWeek, weekStart: weekStartString });
+        weeks.push({ days: currentWeek, weekStart: weekStartString, weekStartDate: weekStart });
         currentWeek = [];
       }
     }
@@ -127,11 +66,66 @@ export default function CalendarSection({ markedDates, onMonthChange }: Calendar
       const lastDate = new Date(year, month, lastDay.getDate());
       const weekStart = getWeekStart(lastDate);
       const weekStartString = weekStart.toISOString().split("T")[0];
-      weeks.push({ days: currentWeek, weekStart: weekStartString });
+      weeks.push({ days: currentWeek, weekStart: weekStartString, weekStartDate: weekStart });
     }
 
     return weeks;
   }, [year, month]);
+
+  // 주차별 거리 로드
+  useEffect(() => {
+    const loadWeekDistances = async () => {
+      const distances: Record<string, number> = {};
+      
+      for (const week of weeksData) {
+        const weekStart = week.weekStartDate;
+        const weekEnd = getWeekEnd(weekStart);
+        const weekStartString = week.weekStart;
+        
+        try {
+          const startMonth = getMonthKey(weekStart);
+          const endMonth = getMonthKey(weekEnd);
+          
+          const monthsToCheck: string[] = [];
+          if (startMonth === endMonth) {
+            monthsToCheck.push(startMonth);
+          } else {
+            monthsToCheck.push(startMonth);
+            monthsToCheck.push(endMonth);
+          }
+          
+          const uniqueMonths = [...new Set(monthsToCheck)];
+          
+          const allHistory: WalkHistoryItem[] = [];
+          for (const monthKey of uniqueMonths) {
+            const historyStorageKey = `${STORAGE_KEY_HISTORY_PREFIX}${monthKey}`;
+            const monthHistory = await AsyncStorage.getItem(historyStorageKey);
+            if (monthHistory) {
+              const parsed: WalkHistoryItem[] = JSON.parse(monthHistory);
+              allHistory.push(...parsed);
+            }
+          }
+          
+          let totalDistance = 0;
+          allHistory.forEach((item) => {
+            const itemDate = new Date(item.startTime);
+            if (itemDate >= weekStart && itemDate <= weekEnd) {
+              totalDistance += item.distance;
+            }
+          });
+          
+          distances[weekStartString] = totalDistance;
+        } catch (error) {
+          console.error("Failed to get week total distance:", error);
+          distances[weekStartString] = 0;
+        }
+      }
+      
+      setWeekDistances(distances);
+    };
+    
+    loadWeekDistances();
+  }, [weeksData]);
 
   const goToPrevMonth = () => {
     const newDate = new Date(year, month - 1, 1);
