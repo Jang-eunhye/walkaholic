@@ -1,8 +1,8 @@
 import "./global.css";
+import "./tasks/backgroundLocationTask";
 import { StatusBar } from "expo-status-bar";
 import { QueryProvider } from "./providers/QueryProvider";
 import TabNavigator from "./components/TabNavigation";
-import { View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useEffect } from "react";
 import { useWalkStore } from "./stores/useWalkStore";

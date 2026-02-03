@@ -23,7 +23,8 @@ interface CurrentWalkData {
   distance: number;
 }
 
-const STORAGE_KEY_CURRENT_WALK = "@walkaholic:currentWalk";
+export const STORAGE_KEY_CURRENT_WALK = "@walkaholic:currentWalk";
+export const STORAGE_KEY_BG_LAST_LOCATION = "@walkaholic:bgLastLocation";
 export const STORAGE_KEY_HISTORY_PREFIX = "@walkaholic:walkHistory:";
 
 export const useWalkStore = create<WalkState>((set, get) => ({
@@ -46,6 +47,7 @@ export const useWalkStore = create<WalkState>((set, get) => ({
       startTime: now,
       distance: 0,
     };
+    await AsyncStorage.removeItem(STORAGE_KEY_BG_LAST_LOCATION);
     await AsyncStorage.setItem(STORAGE_KEY_CURRENT_WALK, JSON.stringify(walkData));
   },
 
@@ -75,6 +77,7 @@ export const useWalkStore = create<WalkState>((set, get) => ({
         steps: 0,
       });
       await AsyncStorage.removeItem(STORAGE_KEY_CURRENT_WALK);
+      await AsyncStorage.removeItem(STORAGE_KEY_BG_LAST_LOCATION);
       return;
     }
 
@@ -113,6 +116,7 @@ console.error("Failed to save walk history:", error);
     });
 
     await AsyncStorage.removeItem(STORAGE_KEY_CURRENT_WALK);
+    await AsyncStorage.removeItem(STORAGE_KEY_BG_LAST_LOCATION);
   },
 
   loadWalkState: async () => {

@@ -1,17 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { AppState } from "react-native";
 import * as Location from "expo-location";
-import { calculateDistance } from "../utils/location/calculateDistance";
-
-// 테스트용 설정값
-const MAX_DISTANCE_PER_UPDATE = 1000; // meters - GPS 튐 방지
-const MAX_SPEED = 1000; // m/s - 걷기/뛰기 범위 초과 시 무시
-const MAX_ACCURACY = 1000; // meters - 정확도가 나쁜 경우 무시
-const MIN_DISTANCE = 0; // meters - GPS 오차 제거
-
-// const MAX_DISTANCE_PER_UPDATE = 20; // meters - GPS 튐 방지
-// const MAX_SPEED = 6; // m/s - 걷기/뛰기 범위 초과 시 무시
-// const MAX_ACCURACY = 20; // meters - 정확도가 나쁜 경우 무시
-// const MIN_DISTANCE = 3; // meters - GPS 오차 제거
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { computeDistanceUpdate } from "../utils/location/computeDistanceUpdate";
+import { STORAGE_KEY_BG_LAST_LOCATION, STORAGE_KEY_CURRENT_WALK } from "../stores/useWalkStore";
+import { BACKGROUND_LOCATION_TASK_NAME } from "../tasks/backgroundLocationTask";
 
 export function useLocationTracking(isWalking: boolean, initialDistance: number = 0) {
   const [totalDistance, setTotalDistance] = useState(initialDistance);
@@ -19,6 +12,7 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
     latitude: number;
     longitude: number;
   } | null>(null);
+  const [isAppActive, setIsAppActive] = useState(AppState.currentState === "active");
 
   const previousLocationRef = useRef<{
     latitude: number;
@@ -27,97 +21,174 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
   const subscriptionRef = useRef<Location.LocationSubscription | null>(null);
 
   useEffect(() => {
-    if (!isWalking) {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.remove();
-        subscriptionRef.current = null;
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      setIsAppActive(nextState === "active");
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const startTracking = async () => {
+    try {
+      const { granted } = await Location.requestForegroundPermissionsAsync();
+      if (!granted) {
+        console.warn("위치 권한이 거부되었습니다.");
+        return;
       }
-      previousLocationRef.current = null;
+
+      const backgroundPermission = await Location.requestBackgroundPermissionsAsync();
+      if (!backgroundPermission.granted) {
+        console.warn("백그라운드 위치 권한이 거부되었습니다.");
+      }
+
+      subscriptionRef.current = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.Highest,
+          timeInterval: 1000,
+          // distanceInterval: 5,
+          distanceInterval: 0,
+        },
+        (location) => {
+          const { latitude, longitude } = location.coords;
+          const newLocation = { latitude, longitude };
+          setCurrentLocation(newLocation);
+
+          const result = computeDistanceUpdate(previousLocationRef.current, location.coords);
+          if (result.kind === "set-prev") {
+            previousLocationRef.current = result.nextPrev;
+          }
+          if (result.kind === "add-distance") {
+            setTotalDistance((prev) => prev + result.distance);
+            previousLocationRef.current = result.nextPrev;
+          }
+        }
+      );
+      
+    } catch (error) {
+      console.error("위치 추적 시작 실패:", error);
+    }
+  };
+
+  const stopForegroundTracking = () => {
+    if (subscriptionRef.current) {
+      subscriptionRef.current.remove();
+      subscriptionRef.current = null;
+    }
+    previousLocationRef.current = null;
+  };
+
+  const startBackgroundTracking = async () => {
+    try {
+      const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+        BACKGROUND_LOCATION_TASK_NAME
+      );
+      if (hasStarted) return;
+      
+      await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.Highest,
+        timeInterval: 1000,
+        distanceInterval: 0,
+        showsBackgroundLocationIndicator: true,
+        foregroundService: {
+          notificationTitle: "산책 거리 측정 중",
+          notificationBody: "백그라운드에서 산책 거리를 기록하고 있어요.",
+        },
+      });
+    } catch (error) {
+      console.error("백그라운드 위치 추적 시작 실패:", error);
+    }
+  };
+
+  const stopBackgroundTracking = async () => {
+    try {
+      const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+        BACKGROUND_LOCATION_TASK_NAME
+      );
+      if (!hasStarted) return;
+      await Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK_NAME);
+    } catch (error) {
+      console.error("백그라운드 위치 추적 중지 실패:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isWalking) {
+      stopForegroundTracking();
       setTotalDistance(0);
       setCurrentLocation(null);
+      const cleanup = async () => {
+        await stopBackgroundTracking();
+        await AsyncStorage.removeItem(STORAGE_KEY_BG_LAST_LOCATION);
+      };
+      cleanup();
+      return;
+    }
+  }, [isWalking]);
+
+  useEffect(() => {
+    if (!isWalking || !isAppActive) {
+      stopForegroundTracking();
       return;
     }
 
-    const startTracking = async () => {
+    const run = async () => {
       try {
-        
-        const { granted } = await Location.requestForegroundPermissionsAsync();
-        if (!granted) {
-          console.warn("위치 권한이 거부되었습니다.");
-          return;
-        }
-
-        const backgroundPermission = await Location.requestBackgroundPermissionsAsync();
-        if (!backgroundPermission.granted) {
-          console.warn("백그라운드 위치 권한이 거부되었습니다.");
-        }
-
-        subscriptionRef.current = await Location.watchPositionAsync(
-          {
-            accuracy: Location.Accuracy.Highest,
-            timeInterval: 1000,
-            // distanceInterval: 5,
-            distanceInterval: 0,
-          },
-          (location) => {
-            const { latitude, longitude, accuracy, speed } = location.coords;
-            
-            // 1. 정확도 검증
-            if (accuracy && accuracy > MAX_ACCURACY) {
-              return; // 신뢰 불가 → previousLocation 업데이트 안 함
-            }
-        
-            // 2. 속도 검증
-            const currentSpeed = speed ?? 0;
-            if (currentSpeed > MAX_SPEED) {
-              return; // 신뢰 불가 → previousLocation 업데이트 안 함
-            }
-        
-            const newLocation = { latitude, longitude };
-            setCurrentLocation(newLocation);
-        
-            // 이전 위치가 있으면 거리 계산
-            if (previousLocationRef.current) {
-              const distance = calculateDistance(
-                previousLocationRef.current.latitude,
-                previousLocationRef.current.longitude,
-                latitude,
-                longitude
-              );
-        
-              // 3. GPS 튐 검증
-              if (distance > MAX_DISTANCE_PER_UPDATE) {
-                return; // 신뢰 불가 → previousLocation 업데이트 안 함
-              }
-        
-              // 4. 최소 거리 필터링
-              if (distance > MIN_DISTANCE) {
-                setTotalDistance((prev) => prev + distance);
-                // ✅ 거리 추가된 경우에만 previousLocation 업데이트
-                previousLocationRef.current = newLocation;
-              }
-              // MIN_DISTANCE 미만이면 previousLocation 업데이트 안 함
-            } else {
-              // 첫 번째 위치는 항상 저장
-              previousLocationRef.current = newLocation;
-            }
-          }
-        );
-        
+        await startTracking();
       } catch (error) {
-        console.error("위치 추적 시작 실패:", error);
+        console.error("포그라운드 위치 추적 시작 실패:", error);
       }
     };
 
-    startTracking();
+    run();
+    return () => {
+      stopForegroundTracking();
+    };
+  }, [isWalking, isAppActive]);
+
+  useEffect(() => {
+    if (!isWalking || isAppActive) {
+      const stop = async () => {
+        await stopBackgroundTracking();
+      };
+      stop();
+      return;
+    }
+
+    const start = async () => {
+      await startBackgroundTracking();
+    };
+    start();
 
     return () => {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.remove();
-        subscriptionRef.current = null;
+      const stop = async () => {
+        await stopBackgroundTracking();
+      };
+      stop();
+    };
+  }, [isWalking, isAppActive]);
+
+  useEffect(() => {
+    if (!isWalking || !isAppActive) {
+      return;
+    }
+
+    const syncDistance = async () => {
+      const currentData = await AsyncStorage.getItem(STORAGE_KEY_CURRENT_WALK);
+      if (!currentData) return;
+      try {
+        const walkData = JSON.parse(currentData);
+        if (typeof walkData.distance === "number") {
+          setTotalDistance(walkData.distance);
+        }
+      } catch (error) {
+        console.error("거리 동기화 실패:", error);
       }
     };
-  }, [isWalking]);
+
+    syncDistance();
+  }, [isWalking, isAppActive]);
 
   return {
     totalDistance,
