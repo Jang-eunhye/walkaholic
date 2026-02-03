@@ -47,6 +47,11 @@ export function useLocationTracking(isWalking: boolean, initialDistance: number 
           return;
         }
 
+        const backgroundPermission = await Location.requestBackgroundPermissionsAsync();
+        if (!backgroundPermission.granted) {
+          console.warn("백그라운드 위치 권한이 거부되었습니다.");
+        }
+
         subscriptionRef.current = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Highest,
