@@ -20,6 +20,12 @@ export default {
     },
     ios: {
       supportsTablet: true,
+      infoPlist: {
+        NSLocationAlwaysAndWhenInUseUsageDescription: "위치 권한을 허용해주세요.",
+        NSLocationAlwaysUsageDescription: "위치 권한을 허용해주세요.",
+        NSLocationWhenInUseUsageDescription: "위치 권한을 허용해주세요.",
+        UIBackgroundModes: ["location"],
+      },
     },
     android: {
       package: "com.eunhye99.walkaholic", // 추가
@@ -31,8 +37,11 @@ export default {
       predictiveBackGestureEnabled: false,
       permissions: [
         "ACTIVITY_RECOGNITION", // 걸음수 측정 권한
-        "ACCESS_FINE_LOCATION", // 위치 권한 (이미 있을 수 있음)
-        "ACCESS_COARSE_LOCATION", // 위치 권한 (이미 있을 수 있음)
+        "ACCESS_FINE_LOCATION", // 위치 권한
+        "ACCESS_COARSE_LOCATION", // 위치 권한
+        "ACCESS_BACKGROUND_LOCATION", // 백그라운드 위치 권한
+        "FOREGROUND_SERVICE", // 포그라운드 서비스 권한
+        "FOREGROUND_SERVICE_LOCATION", // 포그라운드 서비스 위치 권한
       ],
     },
     web: {
